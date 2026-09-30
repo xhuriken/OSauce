@@ -1,0 +1,76 @@
+# ==============================================================================
+# OSauce - .gitignore (Exclusion stricte IA, Local, Builds & IDEs)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. IA & ASSISTANTS (Zéro trace d'IA, logs, prompts, sessions, mémoires)
+# ------------------------------------------------------------------------------
+.gemini/
+.agents/
+.brain/
+.cursor/
+.cursorrules
+.windsurf/
+.claude/
+.github/copilot*
+.mcp.json
+DEVELOPMENT_LOG.md
+TODO.md
+AGENTS.md
+*.chat
+*.prompt
+*.transcript
+ai_logs/
+agent_logs/
+
+# ------------------------------------------------------------------------------
+# 2. CONFIGURATIONS LOCALES, SECRETS & ENV
+# ------------------------------------------------------------------------------
+.env
+.env.*
+*.local
+*.local.*
+*.key
+*.pem
+*.cert
+secrets/
+
+# ------------------------------------------------------------------------------
+# 3. RUST / CARGO (Builds et binaires)
+# ------------------------------------------------------------------------------
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock.backup
+
+# ------------------------------------------------------------------------------
+# 4. ÉMULATEURS, IMAGES DISQUES & PMBOOTSTRAP (Local & Builds OS)
+# ------------------------------------------------------------------------------
+*.img
+*.iso
+*.qcow2
+*.vdi
+*.vmdk
+.pmbootstrap*
+pmbootstrap.cfg
+work/
+chroot/
+dist/
+build/
+
+# ------------------------------------------------------------------------------
+# 5. IDEs, ÉDITEURS & FICHIERS SYSTÈME LOCAL
+# ------------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+*.bak

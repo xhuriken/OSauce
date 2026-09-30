@@ -1,0 +1,22 @@
+[package]
+name = "osauce"
+version = "0.1.0"
+edition = "2021"
+authors = ["Célestin <celestin@honvault.com>"]
+description = "OSauce - Compact, aesthetic and KISS mobile environment"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# UI Framework moderne et léger pour mobile et embarqué
+slint = "1.9"
+
+[build-dependencies]
+slint-build = "1.9"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
