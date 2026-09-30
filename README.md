@@ -1,10 +1,10 @@
-# OSauce 📱
+# OSauce
 
 Système d'exploitation mobile compact, esthétique, ultra-fluide et KISS (Keep It Simple, Stupid).
 
 ---
 
-## 🎯 Vision & Architecture
+## Vision & Architecture
 
 OSauce sépare rigoureusement la couche hôte minimale du conteneur d'applications Android :
 
@@ -29,7 +29,7 @@ OSauce sépare rigoureusement la couche hôte minimale du conteneur d'applicatio
 
 ---
 
-## 🚀 Piles Technologiques
+## Piles Technologiques
 
 * **Interface Utilisateur (Shell)** : Rust + [Slint](https://slint.dev/) (Rendu matériel 60 FPS, mémoire minimale).
 * **Affichage & Compositeur** : Wayland via [Smithay](https://smithay.github.io/).
@@ -39,7 +39,7 @@ OSauce sépare rigoureusement la couche hôte minimale du conteneur d'applicatio
 
 ---
 
-## 🛠️ Développement Local & Simulation
+## Développement Local & Simulation
 
 ### 1. Simulateur Desktop (Interface Shell)
 L'interface graphique est exécutable directement sur PC en simulant une résolution de smartphone (ex: 390x844 px) :
@@ -47,7 +47,7 @@ L'interface graphique est exécutable directement sur PC en simulant une résolu
 cargo run --bin osauce-shell
 ```
 
-### 2. Émulateur Système Complet (QEMU)
+###  Émulateur Système Complet (QEMU)
 Pour tester l'intégration système avec postmarketOS et Waydroid :
 ```bash
 pmbootstrap init
