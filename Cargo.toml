@@ -7,9 +7,20 @@ description = "OSauce - Compact, aesthetic and KISS mobile environment"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 
+[[bin]]
+name = "osauce-shell"
+path = "src/main.rs"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
-# UI Framework moderne et léger pour mobile et embarqué
+# UI Framework moderne et leger pour mobile et embarque
 slint = "1.9"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+getrandom = { version = "0.3", features = ["wasm_js"] }
 
 [build-dependencies]
 slint-build = "1.9"

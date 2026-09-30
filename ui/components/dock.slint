@@ -1,0 +1,46 @@
+import { Theme } from "../styles/theme.slint";
+
+// Application dock at the bottom of the home screen
+export component Dock inherits Rectangle {
+    height: 68px;
+    background: Theme.surface;
+    border-radius: Theme.border_radius_lg;
+
+    HorizontalLayout {
+        alignment: space-around;
+        padding-left: 16px;
+        padding-right: 16px;
+
+        Text {
+            text: "WEB";
+            color: Theme.text_secondary;
+            font-size: 12px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+
+        Text {
+            text: "PHONE";
+            color: Theme.text_secondary;
+            font-size: 12px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+
+        Text {
+            text: "APPS";
+            color: Theme.text_secondary;
+            font-size: 12px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+
+        Text {
+            text: "SETTINGS";
+            color: Theme.text_secondary;
+            font-size: 12px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+    }
+}

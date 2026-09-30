@@ -1,0 +1,34 @@
+import { Theme } from "styles/theme.slint";
+import { StatusBar } from "components/status_bar.slint";
+import { Dock } from "components/dock.slint";
+import { HomeScreen } from "views/home_screen.slint";
+
+// Main window assembling all modular shell components
+export component MainWindow inherits Window {
+    title: "OSauce Simulator";
+    width: 390px;
+    height: 844px;
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.padding_screen;
+        spacing: 16px;
+
+        // Top system bar
+        StatusBar { }
+
+        // Flexible spacer
+        // Rectangle { vertical-stretch: 1; }
+
+        // Central home screen
+        HomeScreen { }
+
+        // Flexible spacer
+        Rectangle {
+            vertical-stretch: 1;
+        }
+
+        // Bottom application dock
+        // Dock {}
+    }
+}

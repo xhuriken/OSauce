@@ -1,90 +1,26 @@
-slint::slint! {
-    import { Button } from "std-widgets.slint";
+use osauce::MainWindow;
+use slint::ComponentHandle;
 
-    export component MainWindow inherits Window {
-        title: "OSauce Simulator";
-        width: 390px;
-        height: 844px;
-        background: #0f172a;
+/// Application entry point for the OSauce Shell Simulator.
+fn main() -> Result<(), slint::PlatformError> {
+    println!("[OSauce] Initializing OSauce Shell Simulator...");
+    println!("[OSauce] Resolution: 390x844 (Mobile portrait)");
 
-        VerticalLayout {
-            padding: 24px;
-            spacing: 16px;
-
-            // Barre de statut supérieure
-            HorizontalLayout {
-                Text {
-                    text: "09:41";
-                    color: #f8fafc;
-                    font-size: 14px;
-                    font-weight: 600;
-                }
-                Rectangle { horizontal-stretch: 1; }
-                Text {
-                    text: "100% 🔋";
-                    color: #4ade80;
-                    font-size: 14px;
-                }
-            }
-
-            Rectangle { vertical-stretch: 1; }
-
-            // Logo / Branding central
-            Text {
-                text: "OSauce";
-                color: #38bdf8;
-                font-size: 32px;
-                font-weight: 800;
-                horizontal-alignment: center;
-            }
-
-            Text {
-                text: "Minimalist & Fast Mobile OS";
-                color: #94a3b8;
-                font-size: 14px;
-                horizontal-alignment: center;
-            }
-
-            Rectangle { vertical-stretch: 1; }
-
-            // Dock d'applications inférieur
-            Rectangle {
-                height: 72px;
-                background: #1e293b;
-                border-radius: 24px;
-
-                HorizontalLayout {
-                    alignment: space-around;
-                    padding-left: 16px;
-                    padding-right: 16px;
-
-                    Text {
-                        text: "🌐";
-                        font-size: 28px;
-                        vertical-alignment: center;
-                    }
-                    Text {
-                        text: "📱";
-                        font-size: 28px;
-                        vertical-alignment: center;
-                    }
-                    Text {
-                        text: "📦";
-                        font-size: 28px;
-                        vertical-alignment: center;
-                    }
-                    Text {
-                        text: "⚙️";
-                        font-size: 28px;
-                        vertical-alignment: center;
-                    }
-                }
-            }
+    // Detect and log the active display server on Linux / WSLg
+    #[cfg(target_os = "linux")]
+    {
+        if std::path::Path::new("/mnt/wslg/runtime-dir/wayland-0").exists() {
+            println!("[OSauce] Display Server: Wayland (WSLg)");
+        } else {
+            let disp = std::env::var("DISPLAY").unwrap_or_else(|_| ":0".to_string());
+            println!("[OSauce] Display Server: X11 ({})", disp);
         }
     }
-}
 
-fn main() -> Result<(), slint::PlatformError> {
+    // Initialize and run the main window event loop
     let main_window = MainWindow::new()?;
+    println!("[OSauce] Window created successfully. Rendering started.");
+    println!("[OSauce] Press Ctrl+C or close the window to exit.");
     main_window.run()
 }
+

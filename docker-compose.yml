@@ -1,0 +1,9 @@
+services:
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: osauce-simulator
+    ports:
+      - "6080:6080"
+    restart: unless-stopped

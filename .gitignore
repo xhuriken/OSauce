@@ -57,6 +57,7 @@ work/
 chroot/
 dist/
 build/
+pkg/
 
 # ------------------------------------------------------------------------------
 # 5. IDEs, ÉDITEURS & FICHIERS SYSTÈME LOCAL

@@ -1,0 +1,46 @@
+import { Theme } from "../styles/theme.slint";
+
+// Clean, minimal center area of the home screen
+export component HomeScreen inherits VerticalLayout {
+    spacing: 8px;
+    alignment: center;
+
+    // Minimal branding header
+    Text {
+        text: "OSauce";
+        color: Theme.primary;
+        font-size: 32px;
+        font-weight: 800;
+        horizontal-alignment: center;
+    }
+
+    Text {
+        text: "Minimalist & Fast";
+        color: Theme.text_secondary;
+        font-size: 13px;
+        horizontal-alignment: center;
+    }
+
+    Text {
+        text: "Like the curve of my dick";
+        color: Theme.text_secondary;
+        font-size: 13px;
+        horizontal-alignment: center;
+    }
+
+    // Rectangle {
+    //     width: 150px;
+    //     height: 30px;
+    //     background: Theme.primary;
+    //     border-radius: 15px;
+
+    //     // Text {
+    //     //     text: "Get Started";
+    //     //     color: white;
+    //     //     font-size: 12px;
+    //     //     font-weight: 700;
+    //     //     horizontal-alignment: center;
+    //     //     vertical-alignment: center;
+    //     // }
+    // }
+}
