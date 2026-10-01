@@ -19,10 +19,11 @@ Ensuite, selon ce sur quoi tu bosses, il y a plusieurs facons de lancer :
 
 ### 1. Le Hot Reload instantane (pour bosser sur l'UI)
 C'est le mode le plus rapide pour taffer sur le design sans attendre que Rust recompile a chaque fois.
-Des que tu modifies `ui/shell.slint` et que tu sauvegardes, la fenetre se met a jour en direct :
+Comme les fichiers sont edites sous Windows, le binaire natif Windows `slint-viewer` est installe dans `.cargo/bin` pour assurer un rafraichissement immediat (< 10ms) a chaque sauvegarde (`Ctrl+S`) sans limitation WSL :
 
-```bash
-slint-viewer ui/shell.slint --auto-reload
+Dans un terminal Windows PowerShell ou CMD :
+```powershell
+slint-viewer --auto-reload ui/shell.slint
 ```
 
 *Note : Tu peux aussi installer l'extension officielle **Slint** dans l'editeur et cliquer sur le bouton "Show Preview" en haut a droite du fichier `ui/shell.slint` pour avoir le rendu interactif directement dans l'editeur.*

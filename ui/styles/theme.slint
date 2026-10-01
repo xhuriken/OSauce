@@ -1,16 +1,38 @@
-// Global design system (colors, metrics, typography)
+// Global design system (colors, metrics, typography, animations)
 export global Theme {
-    // Dark mode color palette
-    out property <color> background: #0f172a;
-    out property <color> surface: #1e293b;
-    out property <color> surface_light: #334155;
+    // Pure dark OLED palette
+    out property <color> background: #030712;
+    out property <color> surface: #0b0f19;
+    out property <color> surface_light: #111827;
+    out property <color> surface_border: rgba(255, 255, 255, 0.07);
+    out property <color> surface_border_accent: rgba(56, 189, 248, 0.35);
+
+    // Accents
     out property <color> primary: #38bdf8;
+    out property <color> primary_glow: rgba(56, 189, 248, 0.15);
+    out property <color> secondary: #818cf8;
+    out property <color> success: #34d399;
+    out property <color> warning: #fbbf24;
+    out property <color> danger: #f87171;
+
+    // Typography colors
     out property <color> text_primary: #f8fafc;
     out property <color> text_secondary: #94a3b8;
-    out property <color> success: #4ade80;
+    out property <color> text_muted: #475569;
+
+    // Fonts
+    out property <string> font_main: "Inter, Segoe UI, sans-serif";
+    out property <string> font_mono: "Bahnschrift, monospace";
 
     // Layout metrics
-    out property <length> border_radius_lg: 24px;
-    out property <length> border_radius_md: 16px;
-    out property <length> padding_screen: 20px;
+    out property <length> border_radius_pill: 9999px;
+    out property <length> border_radius_md: 12px;
+    out property <length> border_radius_sm: 6px;
+    out property <length> padding_screen: 24px;
+
+    // Fluid physics animations
+    out property <duration> anim_instant: 90ms;
+    out property <duration> anim_fast: 160ms;
+    out property <duration> anim_smooth: 300ms;
+    out property <duration> anim_spring: 420ms;
 }

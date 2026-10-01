@@ -1,9 +1,19 @@
 #!/bin/bash
 set -e
 
-# Demarrage du serveur X virtuel Xvfb (format portrait smartphone avec marges)
-Xvfb :0 -screen 0 440x920x24 &
-sleep 1
+# Nettoyage preventif des verrous X11 residuels
+rm -f /tmp/.X0-lock /tmp/.X11-unix/X0
+
+# Demarrage du serveur X virtuel Xvfb avec support GLX
+Xvfb :0 -screen 0 440x920x24 +extension GLX +render -noreset &
+
+# Attente active que le serveur X virtuel soit initialise
+for i in $(seq 1 20); do
+    if [ -e /tmp/.X11-unix/X0 ]; then
+        break
+    fi
+    sleep 0.2
+done
 
 # Demarrage d'un gestionnaire de fenetres minimaliste
 openbox &

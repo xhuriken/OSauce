@@ -3161,6 +3161,7 @@ dependencies = [
 name = "osauce"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "getrandom 0.3.4",
  "slint",
  "slint-build",

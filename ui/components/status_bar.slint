@@ -1,20 +1,67 @@
 import { Theme } from "../styles/theme.slint";
 
-// Minimal system status bar (clock and battery status)
+// Ultra-minimal status bar with dynamic vector clock icon and interactive battery gauge
 export component StatusBar inherits HorizontalLayout {
-    in property <string> time: "09:41";
-    in property <string> battery: "100%";
+    in-out property <string> time: "09:41";
+    in-out property <int> battery_level: 85; // 0 to 100
+    in-out property <bool> is_charging: false;
 
     height: 24px;
     alignment: space-between;
 
-    // Current system time
-    Text {
-        text: root.time;
-        color: Theme.text_primary;
-        font-size: 14px;
-        font-weight: 600;
-        vertical-alignment: center;
+    // --- LEFT : Minimal Clock Icon & Time ---
+    HorizontalLayout {
+        spacing: 6px;
+        alignment: start;
+
+        // Geometric Clock Icon (Pure SVG-like geometry)
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 14px;
+                height: 14px;
+                border-radius: Theme.border_radius_pill;
+                border-width: 1.4px;
+                border-color: Theme.text_primary;
+
+                // Center hub
+                Rectangle {
+                    width: 2px;
+                    height: 2px;
+                    border-radius: Theme.border_radius_pill;
+                    background: Theme.text_primary;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                }
+
+                // Minute hand (pointing right)
+                Rectangle {
+                    width: 4px;
+                    height: 1px;
+                    background: Theme.text_primary;
+                    x: (parent.width / 2);
+                    y: (parent.height - self.height) / 2;
+                }
+
+                // Hour hand (pointing up)
+                Rectangle {
+                    width: 1px;
+                    height: 4px;
+                    background: Theme.text_primary;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height / 2) - self.height;
+                }
+            }
+        }
+
+        // Current system time
+        Text {
+            text: root.time;
+            color: Theme.text_primary;
+            font-size: 13px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
     }
 
     // Flexible layout spacer
@@ -22,12 +69,85 @@ export component StatusBar inherits HorizontalLayout {
         horizontal-stretch: 1;
     }
 
-    // Battery percentage indicator
-    Text {
-        text: root.battery;
-        color: Theme.success;
-        font-size: 14px;
-        font-weight: 600;
-        vertical-alignment: center;
+    // --- RIGHT : Interactive Dynamic Battery Gauge ---
+    HorizontalLayout {
+        spacing: 6px;
+        alignment: end;
+
+        // Battery percentage text
+        Text {
+            text: root.is_charging ? "\{root.battery_level}% CHG" : "\{root.battery_level}%";
+            color: root.is_charging ? Theme.primary : (root.battery_level <= 20 ? Theme.danger : Theme.text_secondary);
+            font-size: 11px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+
+        // Vector Battery Shell with fluid interior level
+        VerticalLayout {
+            alignment: center;
+
+            HorizontalLayout {
+                spacing: 1px;
+                alignment: center;
+
+                // Main body
+                Rectangle {
+                    width: 22px;
+                    height: 12px;
+                    border-radius: 3px;
+                    border-width: 1.2px;
+                    border-color: root.is_charging ? Theme.primary : Theme.text_primary;
+
+                    // Interior liquid charge fill
+                    Rectangle {
+                        x: 2px;
+                        y: 2px;
+                        height: parent.height - 4px;
+                        width: Math.max(2px, (parent.width - 4px) * root.battery_level / 100);
+                        border-radius: 1.5px;
+                        background: root.is_charging ? Theme.primary : (root.battery_level <= 20 ? Theme.danger : (root.battery_level <= 40 ? Theme.warning : Theme.success));
+
+                        animate width, background {
+                            duration: Theme.anim_fast;
+                            easing: ease-out;
+                        }
+                    }
+                }
+
+                // Positive terminal nub
+                VerticalLayout {
+                    alignment: center;
+                    Rectangle {
+                        width: 2px;
+                        height: 5px;
+                        border-radius: 1px;
+                        background: root.is_charging ? Theme.primary : Theme.text_primary;
+                    }
+                }
+            }
+        }
+
+        // Tap on battery to test dynamicity (cycles levels & charging state)
+        TouchArea {
+            clicked => {
+                if root.battery_level == 100 {
+                    root.battery_level = 68;
+                    root.is_charging = false;
+                } else if root.battery_level == 68 {
+                    root.battery_level = 35;
+                    root.is_charging = false;
+                } else if root.battery_level == 35 {
+                    root.battery_level = 14;
+                    root.is_charging = false;
+                } else if root.battery_level == 14 {
+                    root.battery_level = 88;
+                    root.is_charging = true;
+                } else {
+                    root.battery_level = 100;
+                    root.is_charging = false;
+                }
+            }
+        }
     }
 }

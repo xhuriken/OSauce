@@ -1,6 +1,5 @@
 import { Theme } from "styles/theme.slint";
 import { StatusBar } from "components/status_bar.slint";
-import { Dock } from "components/dock.slint";
 import { HomeScreen } from "views/home_screen.slint";
 
 // Main window assembling all modular shell components
@@ -9,28 +8,36 @@ export component MainWindow inherits Window {
     width: 390px;
     height: 844px;
     background: Theme.background;
+    default-font-family: Theme.font_main;
+
+    // Hardware and OS telemetry properties exposed to Rust
+    in-out property <int> system_hours <=> home.hours;
+    in-out property <int> system_minutes <=> home.minutes;
+    in-out property <int> system_seconds <=> home.seconds;
+    in-out property <string> system_date <=> home.date_string;
+    in-out property <int> system_battery <=> status.battery_level;
+    in-out property <bool> system_is_charging <=> status.is_charging;
+    in-out property <bool> is_unlocked <=> home.is_unlocked;
+
+    // Callbacks connecting UI events to Rust backend
+    callback request_unlock <=> home.request_unlock;
+    callback request_lock <=> home.request_lock;
 
     VerticalLayout {
-        padding: Theme.padding_screen;
-        spacing: 16px;
+        padding-top: 14px;
+        padding-bottom: 24px;
+        padding-left: Theme.padding_screen;
+        padding-right: Theme.padding_screen;
+        spacing: 14px;
 
-        // Top system bar
-        StatusBar { }
-
-        // Flexible spacer
-        Rectangle {
-            vertical-stretch: 1;
+        // Top system bar with live time and battery
+        status := StatusBar {
+            time: (home.hours < 10 ? "0" : "") + "\{home.hours}:" + (home.minutes < 10 ? "0" : "") + "\{home.minutes}";
         }
 
-        // Central home screen
-        HomeScreen { }
-
-        // Flexible spacer
-        Rectangle {
+        // Central interactive lock and home screen
+        home := HomeScreen {
             vertical-stretch: 1;
         }
-
-        // Bottom application dock
-        // Dock {}
     }
 }
