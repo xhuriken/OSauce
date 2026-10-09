@@ -71,7 +71,16 @@ pkg/
 *.sublime-workspace
 .DS_Store
 Thumbs.db
-desktop.ini
 *.log
 *.tmp
 *.bak
+
+# ------------------------------------------------------------------------------
+# 6. GRADLE & ANDROID BUILDS
+# ------------------------------------------------------------------------------
+.gradle/
+build/
+**/build/
+*.apk
+*.aab
+local.properties

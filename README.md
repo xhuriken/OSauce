@@ -1,127 +1,79 @@
-# OSauce
+# OSauce - Launcher Android Sobre & Modding Communautaire
 
-Mon projet d'OS mobile minimaliste, rapide et propre.
-L'idee de base : un systeme hyper leger base sur Linux (postmarketOS), une interface maison en Rust avec Slint qui tourne a 60/120 FPS sur GPU, et la possibilite de faire tourner des applis Android grace a Waydroid quand c'est necessaire.
+OSauce est un launcher Android alternatif concu pour rompre avec l'economie de l'attention et le bombardement de notifications, developpe nativement en **Kotlin** et **Jetpack Compose**.
 
-Pas de trucs lourds, pas d'emojis, juste KISS
+Il remplace le bureau classique d'Android par une approche fluide par **Groupes d'Action** (unifiant alertes, todos et outils) et integre un **Marketplace de mods communautaires** pour developper et partager des extensions ouvertes.
 
----
-
-## Comment lancer le projet
-
-Le developpement et les tests complets se font sous **WSL2 (Ubuntu)** et dans l'emulateur mobile **QEMU postmarketOS**.
+Pas de trucs lourds, pas de publicite, pas d'emojis, juste KISS.
 
 ---
 
-### Methode 1 : L'Emulateur Mobile Complet (QEMU + postmarketOS + Waydroid)
+## 1. Pourquoi ce Pivot vers un Launcher Android ?
 
-C'est l'environnement reel du smartphone qui fait tourner le noyau Linux mobile, le compositeur Wayland et le conteneur Android Waydroid.
+1. **Accessibilite Maximale** : Une installation en 30 secondes depuis un fichier `.apk`, sans avoir a flasher son bootloader ou risquer de bricker son smartphone.
+2. **Compatibilite Totale Immediate** : Toutes les applications bancaires, de transport et de messagerie fonctionnent nativement sans couche de conteneurisation lourde.
+3. **Tri Intelligent des Notifications** : Grâce a l'API native `NotificationListenerService`, OSauce intercepte les alertes et les classe sans encombrement visuel.
+4. **Shaders et Animations Modernes** : Rendu fluide a 120 FPS et shaders AGSL sur-mesure (cadran solaire, transitions organiques).
 
-#### 1. Ouvrir l'environnement WSL
-Depuis PowerShell ou CMD :
-```bash
-wsl --cd c:\Users\celestin\OS
+---
+
+## 2. Les 4 Écrans du Prototype
+
+1. **Écran 1 : Le Silence** : Horloge geante epuree, jauge d'autonomie textuelle fine, intention unique du moment et dock d'urgence minimaliste.
+2. **Écran 2 : Le Hub d'Action** : 4 groupes de vie thematiques (Humain & Proches, Travail & Etudes, Quotidien & Vital, Temps Libre).
+3. **Écran 2-B : Le Groupe Déplié** : Vue interieure combinant « Ce qui attend » (alertes avec bouton de conversion en Todo), « Mes tâches du groupe » et « Outils du groupe ».
+4. **Écran 3 : La Boîte à Outils** : Liste alphabetique sobre et monochrome sans logos criards avec recherche instantanee.
+5. **Écran 4 : Marketplace Communautaire** : Catalogue integre de mods, shaders et widgets verifies sans traceur publicitaire.
+
+---
+
+## 3. Le Nouvel Axe : Modding Communautaire & Marketplace
+
+OSauce ne fige pas l'utilisateur dans une boite fermee :
+* Les developpeurs et passionnes peuvent creer leurs propres widgets, shaders AGSL ou passerelles (ex: pont Obsidian, minuteur Pomodoro, widget velo) via l'API ouverte.
+* Les mods sont publies et audites sur la plateforme communautaire `osauce.io`.
+* L'utilisateur les installe et les active en un clic directement depuis le Marketplace integre dans l'application.
+* Consultez [docs/MODDING_AND_MARKETPLACE.md](file:///c:/Users/celestin/OS/docs/MODDING_AND_MARKETPLACE.md) pour les specifications du SDK.
+
+---
+
+## 4. Structure du Projet
+
 ```
-
-#### 2. Demarrer le telephone virtuel dans QEMU
-Dans ton premier terminal WSL :
-```bash
-pmbootstrap qemu --no-kvm --cpu max --image-size 8G --display sdl
-```
-* Explication des options :
-  * `--cpu max` : Active les jeux d'instructions recents (SSSE3) requis par Android AOSP.
-  * `--image-size 8G` : Alloue l'espace suffisant pour LineageOS et les applications.
-  * `--display sdl` : Ouvre la fenetre graphique directement sous Windows via WSLg.
-
-#### 3. Se connecter en SSH (terminal de commande)
-Ouvre un **second terminal WSL** (ou un onglet) pour piloter la VM avec ton clavier AZERTY et le copier-coller :
-```bash
-ssh -p 2222 user@localhost
-```
-* Identifiants : utilisateur `user`, mot de passe `1234`.
-* Si tu utilises PowerShell directement : `wsl -e ssh -p 2222 user@localhost`.
-
-#### 4. Demarrer le serveur graphique (Weston) et Android (Waydroid)
-1. Dans la **fenetre QEMU** physique, tape :
-   ```bash
-   weston
-   ```
-   *(Le bureau graphique Wayland s'ouvre sur l'ecran du telephone).*
-2. Dans ton **terminal SSH**, lance la session Android :
-   ```bash
-   export WAYLAND_DISPLAY=wayland-1
-   waydroid session start &
-   waydroid show-full-ui
-   ```
-   *(L'interface Android s'affiche a l'ecran dans la fenetre QEMU).*
-
-#### 5. Installer des applications Android (APK)
-Dans le terminal SSH :
-```bash
-# 1. Telecharger l'APK (exemple : F-Droid Store d'apps open-source)
-wget -O F-Droid.apk https://f-droid.org/F-Droid.apk
-
-# 2. Installer le paquet dans le conteneur Waydroid
-waydroid app install F-Droid.apk
-```
-
-#### 6. Compiler et deployer le Shell OSauce (Rust) dans la VM
-Pour executer l'interface OSauce dans la machine virtuelle :
-```bash
-# Depuis ton terminal WSL principal (dans le dossier du projet) :
-cargo build --release --bin osauce-shell
-scp -P 2222 target/release/osauce-shell user@localhost:~
-
-# Dans le terminal SSH :
-export WAYLAND_DISPLAY=wayland-1
-./osauce-shell
+OS/
+├── app/                                 <- Code source de l'application Android
+│   ├── src/main/
+│   │   ├── AndroidManifest.xml          <- Declaration du Launcher et du service de notifications
+│   │   └── kotlin/com/osauce/launcher/
+│   │       ├── MainActivity.kt          <- Point d'entree et machine a etats
+│   │       ├── data/model/              <- Modeles ActionGroup et PluginManifest
+│   │       ├── plugin/                  <- PluginManager et gestion des mods
+│   │       ├── service/                 <- NotificationService (Listener)
+│   │       └── ui/
+│   │           ├── screens/             <- Silence, Hub, Detail, Tools, Marketplace
+│   │           └── theme/               <- Tokens OLED (#000000) et typographie
+│   └── build.gradle.kts
+├── docs/
+│   ├── ARCHITECTURE.md                  <- Architecture technique globale Mermaid
+│   ├── MODDING_AND_MARKETPLACE.md       <- Cahier des charges du Store de plugins
+│   └── PROTOTYPE_SPEC_FIGMA.md          <- Master prompt et specifications UI Figma
+├── entrepreneuriat/                     <- Dossier complet CDA (BMCs, previsionnels, etude)
+├── build.gradle.kts
+└── settings.gradle.kts
 ```
 
 ---
 
-### Methode 2 : Le Simulateur Rapide sur PC (Dev UI & Hot Reload)
+## 5. Comment compiler et tester
 
-Pour modifier le design et iterer sur l'interface Slint sans lancer l'emulateur complet :
+### Ouvrir dans Android Studio
+1. Ouvrez **Android Studio** (Koala / Ladybug ou superieur).
+2. Cliquez sur `Open Project` et selectionnez le dossier `c:\Users\celestin\OS`.
+3. Laissez Gradle synchroniser les dependances.
+4. Lancez le projet sur un émulateur ou sur votre smartphone Android relie en USB avec le debogage USB active.
 
-1. **Hot Reload instantane Slint** (rafraichissement a chaque sauvegarde) :
-   ```powershell
-   slint-viewer --auto-reload ui/shell.slint
-   ```
-2. **Simulateur natif Rust** :
-   ```bash
-   cargo run --bin osauce-shell
-   ```
-
----
-
-### Commandes utiles et depannage
-
-* **Clavier AZERTY dans la fenetre QEMU directe** : `sudo loadkeys fr`
-* **Eteindre proprement la VM** : `sudo poweroff` (dans la console ou par SSH).
-* **Verifier l'espace disque dans la VM** : `df -h /`
-* **Verifier le conteneur Waydroid** : `waydroid status` et `systemctl status waydroid-container`
-
----
-
-## Ce que j'ai appris et comment le projet est decoupe
-
-### 1. Le decoupage des fichiers
-* `ui/shell.slint` : Layout racine, navigation entre l'accueil et les vues de signaux.
-* `ui/views/` : Vues de l'application (accueil zen, intentions, liens humains, moments).
-* `ui/components/` : Composants reutilisables (carte calme, dock vectoriel, status bar).
-* `ui/styles/theme.slint` : Constantes graphiques, palette pastel et tokens d'animation.
-* `src/main.rs` : Moteur Rust, telemetrie materielle (batterie sysfs, horloge), gestion des callbacks et passerelle Waydroid.
-
-### 2. Architecture et Compatibilite Android
-* Le systeme hote est un Linux epure (postmarketOS sous Alpine).
-* La compatibilite applicative Android est assuree par Waydroid sans passer par un emulateur lourd : partage direct du noyau via `/dev/binder` et rendu GPU direct sur Wayland.
-* L'installation de paquets se fait via les APK dumpes depuis F-Droid ou l'API Google Play (Aurora Store) sans dependance aux composants privateurs Google Services.
-
----
-
-## Documentation et Architecture
-
-- Architecture logicielle detaillee : [`docs/ARCHITECTURE.md`](file:///c:/Users/celestin/OS/docs/ARCHITECTURE.md)
-- Guide de developpement Rust : [`docs/RUST_GUIDE.md`](file:///c:/Users/celestin/OS/docs/RUST_GUIDE.md)
-- Guide de developpement Slint UI : [`docs/SLINT_GUIDE.md`](file:///c:/Users/celestin/OS/docs/SLINT_GUIDE.md)
-
+### En ligne de commande (Gradle)
+```bash
+./gradlew assembleDebug
+```
+L'APK genere se trouvera dans `app/build/outputs/apk/debug/app-debug.apk`.
