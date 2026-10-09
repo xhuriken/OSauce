@@ -1,0 +1,283 @@
+import { Theme } from "../styles/theme.slint";
+import { SignalsHeader } from "../components/signals_header.slint";
+import { SignalsTabBar } from "../components/signals_tab_bar.slint";
+
+// Signals View 1: Intentions (3 organic interactive focus circles)
+export component SignalsIntentions inherits VerticalLayout {
+    in-out property <string> time_string: "22:48";
+    in-out property <string> sec_string: "36";
+    in-out property <string> date_string: "Lundi 5 octobre 2026";
+    in-out property <int> battery_level: 84;
+
+    callback open_group(string); // "repondre", "prevoir", "pour_soi"
+    callback mask_all();
+    callback select_tab(int);
+    callback open_settings();
+    callback return_home();
+
+    spacing: 0px;
+    alignment: space-between;
+
+    // Header
+    SignalsHeader {
+        time_string: root.time_string;
+        sec_string: root.sec_string;
+        date_string: root.date_string;
+        battery_level: root.battery_level;
+        tag: "NOTIFICATIONS / 6 SIGNAUX";
+        title: "Juste l'essentiel.";
+        subtitle: "Un signal, une intention. Le reste attend.";
+    }
+
+    // Central organic circles arrangement
+    VerticalLayout {
+        spacing: 16px;
+        alignment: center;
+
+        // Circle 1: "Repondre" (Top dominant circle)
+        HorizontalLayout {
+            alignment: center;
+
+            circle1_touch := TouchArea {
+                width: 140px;
+                clicked => { root.open_group("repondre"); }
+
+                VerticalLayout {
+                    spacing: 8px;
+                    alignment: center;
+
+                    HorizontalLayout {
+                        alignment: center;
+
+                        Rectangle {
+                            width: 96px;
+                            height: 96px;
+                            border-radius: 48px;
+                            background: circle1_touch.pressed ? Theme.pastel_purple_glow : Theme.surface;
+                            border-width: 1.5px;
+                            border-color: circle1_touch.pressed ? Theme.pastel_purple : rgba(196, 181, 253, 0.45);
+
+                            animate background, border-color { duration: Theme.anim_fast; }
+
+                            // Center number
+                            Text {
+                                text: "3";
+                                font-family: Theme.font_main;
+                                font-size: 26px;
+                                font-weight: 300;
+                                color: Theme.text_primary;
+                                x: (parent.width - self.width) / 2;
+                                y: (parent.height - self.height) / 2;
+                            }
+
+                            // Satellite light bead
+                            Rectangle {
+                                width: 5px;
+                                height: 5px;
+                                border-radius: 2.5px;
+                                background: Theme.pastel_purple;
+                                x: 72px;
+                                y: 16px;
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: "Repondre +";
+                        font-family: Theme.font_main;
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: Theme.text_primary;
+                        horizontal-alignment: center;
+                    }
+
+                    Text {
+                        text: "Lea · Papa · Maya";
+                        font-family: Theme.font_main;
+                        font-size: 11px;
+                        color: Theme.text_muted;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+        }
+
+        // Row of Circle 2 ("Prevoir") & Circle 3 ("Pour soi")
+        HorizontalLayout {
+            alignment: space-around;
+            padding-left: 10px;
+            padding-right: 10px;
+
+            // Circle 2: Prevoir (Green pastel)
+            circle2_touch := TouchArea {
+                width: 130px;
+                clicked => { root.open_group("prevoir"); }
+
+                VerticalLayout {
+                    spacing: 6px;
+                    alignment: center;
+
+                    HorizontalLayout {
+                        alignment: center;
+
+                        Rectangle {
+                            width: 80px;
+                            height: 80px;
+                            border-radius: 40px;
+                            background: circle2_touch.pressed ? Theme.pastel_green_glow : Theme.surface;
+                            border-width: 1.5px;
+                            border-color: circle2_touch.pressed ? Theme.pastel_green : rgba(134, 239, 172, 0.4);
+
+                            animate background, border-color { duration: Theme.anim_fast; }
+
+                            Text {
+                                text: "2";
+                                font-family: Theme.font_main;
+                                font-size: 22px;
+                                font-weight: 300;
+                                color: Theme.pastel_green;
+                                x: (parent.width - self.width) / 2;
+                                y: (parent.height - self.height) / 2;
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: "Prevoir +";
+                        font-family: Theme.font_main;
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: Theme.text_primary;
+                        horizontal-alignment: center;
+                    }
+
+                    Text {
+                        text: "Studio · Agenda";
+                        font-family: Theme.font_main;
+                        font-size: 10px;
+                        color: Theme.text_muted;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+
+            // Circle 3: Pour soi (Purple pastel)
+            circle3_touch := TouchArea {
+                width: 130px;
+                clicked => { root.open_group("pour_soi"); }
+
+                VerticalLayout {
+                    spacing: 6px;
+                    alignment: center;
+
+                    HorizontalLayout {
+                        alignment: center;
+
+                        Rectangle {
+                            width: 72px;
+                            height: 72px;
+                            border-radius: 36px;
+                            background: circle3_touch.pressed ? Theme.pastel_purple_glow : Theme.surface;
+                            border-width: 1.5px;
+                            border-color: circle3_touch.pressed ? Theme.pastel_purple : rgba(196, 181, 253, 0.35);
+
+                            animate background, border-color { duration: Theme.anim_fast; }
+
+                            Text {
+                                text: "1";
+                                font-family: Theme.font_main;
+                                font-size: 20px;
+                                font-weight: 300;
+                                color: Theme.text_primary;
+                                x: (parent.width - self.width) / 2;
+                                y: (parent.height - self.height) / 2;
+                            }
+
+                            // Small bead
+                            Rectangle {
+                                width: 4px;
+                                height: 4px;
+                                border-radius: 2px;
+                                background: Theme.pastel_purple;
+                                x: 54px;
+                                y: 16px;
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: "Pour soi +";
+                        font-family: Theme.font_main;
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: Theme.text_primary;
+                        horizontal-alignment: center;
+                    }
+
+                    Text {
+                        text: "Lecture";
+                        font-family: Theme.font_main;
+                        font-size: 10px;
+                        color: Theme.text_muted;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+
+    // Bottom Action & Mask Button
+    VerticalLayout {
+        spacing: 12px;
+        alignment: center;
+
+        Text {
+            text: "Touchez un signal pour lui faire de la place.";
+            font-family: Theme.font_main;
+            font-size: 11px;
+            color: Theme.text_muted;
+            horizontal-alignment: center;
+        }
+
+        mask_touch := TouchArea {
+            height: 32px;
+            clicked => { root.mask_all(); }
+
+            HorizontalLayout {
+                alignment: center;
+                spacing: 6px;
+
+                // Eye slashed glyph
+                Path {
+                    width: 13px;
+                    height: 9px;
+                    y: (parent.height - self.height) / 2;
+                    stroke: Theme.text_secondary;
+                    stroke-width: 1.3px;
+
+                    MoveTo { x: 0; y: 4.5; }
+                    LineTo { x: 6.5; y: 0; }
+                    LineTo { x: 13; y: 4.5; }
+                    LineTo { x: 6.5; y: 9; }
+                    Close {}
+                }
+
+                Text {
+                    text: "Tout masquer";
+                    font-family: Theme.font_main;
+                    font-size: 12px;
+                    color: Theme.text_secondary;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+
+    // Tab Bar
+    SignalsTabBar {
+        active_tab: 0;
+        select_tab(index) => { root.select_tab(index); }
+        open_settings => { root.open_settings(); }
+        return_home => { root.return_home(); }
+    }
+}

@@ -1,43 +1,275 @@
 import { Theme } from "styles/theme.slint";
 import { StatusBar } from "components/status_bar.slint";
-import { HomeScreen } from "views/home_screen.slint";
+import { HomeView } from "views/home_view.slint";
+import { SignalsIntentions } from "views/signals_intentions.slint";
+import { SignalsGroupView } from "views/signals_group_view.slint";
+import { SignalsLinks } from "views/signals_links.slint";
+import { SignalsMoments } from "views/signals_moments.slint";
+import { SignalsSettings } from "views/signals_settings.slint";
+import { AppsView } from "views/apps_view.slint";
 
-// Main window assembling all modular shell components
+// Main OSauce Window with serene signals flow: Accueil -> Signaux -> Groupe ouvert -> Replier/Masquer
 export component MainWindow inherits Window {
-    title: "OSauce Simulator";
+    title: "OSauce - Respirer";
     width: 390px;
     height: 844px;
     background: Theme.background;
     default-font-family: Theme.font_main;
 
-    // Hardware and OS telemetry properties exposed to Rust
-    in-out property <int> system_hours <=> home.hours;
-    in-out property <int> system_minutes <=> home.minutes;
-    in-out property <int> system_seconds <=> home.seconds;
-    in-out property <string> system_date <=> home.date_string;
-    in-out property <int> system_battery <=> status.battery_level;
-    in-out property <bool> system_is_charging <=> status.is_charging;
-    in-out property <bool> is_unlocked <=> home.is_unlocked;
+    // Telemetry properties synchronized with Rust backend
+    in-out property <int> system_hours: 22;
+    in-out property <int> system_minutes: 48;
+    in-out property <int> system_seconds: 36;
+    in-out property <string> system_date: "Lundi 5 octobre 2026";
+    in-out property <int> system_battery: 84;
+    in-out property <bool> system_is_charging: true;
+    in-out property <bool> is_unlocked: true;
 
-    // Callbacks connecting UI events to Rust backend
-    callback request_unlock <=> home.request_unlock;
-    callback request_lock <=> home.request_lock;
+    // State machine properties
+    // 0 = Home, 1 = Intentions, 2 = GroupOpen, 3 = Links, 4 = Moments, 5 = Settings, 6 = Apps
+    in-out property <int> current_screen: 0;
+    in-out property <int> previous_signals_tab: 0; // Remembers where to return on fold
+    in-out property <int> presentation_mode: 0;    // 0 = Intentions, 1 = Liens, 2 = Moments
+    in-out property <bool> single_group_mode: true;
+    in-out property <bool> all_masked: false;
+    in-out property <int> signal_count: 6;
 
+    // Callbacks for Rust integration
+    callback request_unlock();
+    callback request_lock();
+    callback open_app(string);
+    callback install_android_app(string, string);
+
+    // Autonomous live second timer in Slint (also synchronized by Rust)
+    Timer {
+        interval: 1s;
+        running: true;
+        triggered => {
+            root.system_seconds += 1;
+            if root.system_seconds >= 60 {
+                root.system_seconds = 0;
+                root.system_minutes += 1;
+                if root.system_minutes >= 60 {
+                    root.system_minutes = 0;
+                    root.system_hours += 1;
+                    if root.system_hours >= 24 {
+                        root.system_hours = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    // Helper functions for string formatting
+    pure function time_text() -> string {
+        return (root.system_hours < 10 ? "0" : "") + "\{root.system_hours}:" + (root.system_minutes < 10 ? "0" : "") + "\{root.system_minutes}";
+    }
+
+    pure function sec_text() -> string {
+        return (root.system_seconds < 10 ? "0" : "") + "\{root.system_seconds}";
+    }
+
+    // Main Layout container
     VerticalLayout {
         padding-top: 14px;
-        padding-bottom: 24px;
+        padding-bottom: 20px;
         padding-left: Theme.padding_screen;
         padding-right: Theme.padding_screen;
-        spacing: 14px;
 
-        // Top system bar with live time and battery
-        status := StatusBar {
-            time: (home.hours < 10 ? "0" : "") + "\{home.hours}:" + (home.minutes < 10 ? "0" : "") + "\{home.minutes}";
+        // Top persistent status bar
+        StatusBar {
+            battery_level: root.system_battery;
+            is_charging: root.system_is_charging;
+            show_clock_small: root.current_screen != 0;
+            time_string: root.time_text();
+            sec_string: root.sec_text();
         }
 
-        // Central interactive lock and home screen
-        home := HomeScreen {
-            vertical-stretch: 1;
+        // --- VIEW 0: HOME SCREEN ---
+        if root.current_screen == 0: HomeView {
+            hours: root.system_hours;
+            minutes: root.system_minutes;
+            seconds: root.system_seconds;
+            date_string: root.system_date;
+            battery_level: root.system_battery;
+            is_charging: root.system_is_charging;
+            all_masked: root.all_masked;
+            signal_count: root.signal_count;
+
+            open_signals => {
+                if root.presentation_mode == 0 {
+                    root.current_screen = 1;
+                } else if root.presentation_mode == 1 {
+                    root.current_screen = 3;
+                } else {
+                    root.current_screen = 4;
+                }
+            }
+
+            open_phone => { root.open_app("phone"); }
+            open_messages => { root.open_app("messages"); }
+            open_camera => { root.open_app("camera"); }
+            open_apps => { root.current_screen = 6; }
+        }
+
+        // --- VIEW 1: SIGNAUX - INTENTIONS ---
+        if root.current_screen == 1: SignalsIntentions {
+            time_string: root.time_text();
+            sec_string: root.sec_text();
+            date_string: root.system_date;
+            battery_level: root.system_battery;
+
+            open_group(name) => {
+                root.previous_signals_tab = 1;
+                root.current_screen = 2; // Open group
+            }
+
+            mask_all => {
+                root.all_masked = true;
+                root.current_screen = 0; // Return to Home with masked notice
+            }
+
+            select_tab(index) => {
+                if index == 0 { root.current_screen = 1; }
+                else if index == 1 { root.current_screen = 3; }
+                else if index == 2 { root.current_screen = 4; }
+            }
+
+            open_settings => {
+                root.previous_signals_tab = 1;
+                root.current_screen = 5;
+            }
+
+            return_home => {
+                root.current_screen = 0;
+            }
+        }
+
+        // --- VIEW 2: SIGNAUX - GROUPE OUVERT (REPONDRE) ---
+        if root.current_screen == 2: SignalsGroupView {
+            time_string: root.time_text();
+            sec_string: root.sec_text();
+            date_string: root.system_date;
+            battery_level: root.system_battery;
+            group_name: "Repondre";
+
+            close_group => {
+                root.current_screen = root.previous_signals_tab;
+            }
+
+            mask_group => {
+                root.all_masked = true;
+                root.current_screen = 0;
+            }
+
+            action_item(name) => {
+                root.open_app("messages");
+            }
+        }
+
+        // --- VIEW 3: SIGNAUX - LIENS HUMAINS ---
+        if root.current_screen == 3: SignalsLinks {
+            time_string: root.time_text();
+            sec_string: root.sec_text();
+            date_string: root.system_date;
+            battery_level: root.system_battery;
+
+            open_group(name) => {
+                root.previous_signals_tab = 3;
+                root.current_screen = 2;
+            }
+
+            select_tab(index) => {
+                if index == 0 { root.current_screen = 1; }
+                else if index == 1 { root.current_screen = 3; }
+                else if index == 2 { root.current_screen = 4; }
+            }
+
+            open_settings => {
+                root.previous_signals_tab = 3;
+                root.current_screen = 5;
+            }
+
+            return_home => {
+                root.current_screen = 0;
+            }
+        }
+
+        // --- VIEW 4: SIGNAUX - MOMENTS ---
+        if root.current_screen == 4: SignalsMoments {
+            time_string: root.time_text();
+            sec_string: root.sec_text();
+            date_string: root.system_date;
+            battery_level: root.system_battery;
+
+            open_group(name) => {
+                root.previous_signals_tab = 4;
+                root.current_screen = 2;
+            }
+
+            select_tab(index) => {
+                if index == 0 { root.current_screen = 1; }
+                else if index == 1 { root.current_screen = 3; }
+                else if index == 2 { root.current_screen = 4; }
+            }
+
+            open_settings => {
+                root.previous_signals_tab = 4;
+                root.current_screen = 5;
+            }
+
+            return_home => {
+                root.current_screen = 0;
+            }
+        }
+
+        // --- VIEW 5: REGLAGES / TRI ET MASQUAGE ---
+        if root.current_screen == 5: SignalsSettings {
+            time_string: root.time_text();
+            sec_string: root.sec_text();
+            date_string: root.system_date;
+            battery_level: root.system_battery;
+            presentation_mode: root.presentation_mode;
+            single_group_mode: root.single_group_mode;
+            all_masked: root.all_masked;
+
+            set_presentation(mode) => {
+                root.presentation_mode = mode;
+            }
+
+            toggle_single_group => {
+                root.single_group_mode = !root.single_group_mode;
+            }
+
+            toggle_mask_all => {
+                root.all_masked = !root.all_masked;
+            }
+
+            go_back => {
+                if root.presentation_mode == 0 { root.current_screen = 1; }
+                else if root.presentation_mode == 1 { root.current_screen = 3; }
+                else { root.current_screen = 4; }
+            }
+        }
+
+        // --- VIEW 6: APPLICATIONS ET STORE ---
+        if root.current_screen == 6: AppsView {
+            time_string: root.time_text();
+            sec_string: root.sec_text();
+            date_string: root.system_date;
+            battery_level: root.system_battery;
+
+            return_home => {
+                root.current_screen = 0;
+            }
+
+            launch_app(pkg) => {
+                root.open_app(pkg);
+            }
+
+            install_app(name, url) => {
+                root.install_android_app(name, url);
+            }
         }
     }
 }

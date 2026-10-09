@@ -1,0 +1,199 @@
+import { Theme } from "../styles/theme.slint";
+import { SignalsHeader } from "../components/signals_header.slint";
+import { SignalsTabBar } from "../components/signals_tab_bar.slint";
+
+// Signals View 2: Human Connections (Constellation around real people, not app icons)
+export component SignalsLinks inherits VerticalLayout {
+    in-out property <string> time_string: "22:48";
+    in-out property <string> sec_string: "36";
+    in-out property <string> date_string: "Lundi 5 octobre 2026";
+    in-out property <int> battery_level: 84;
+
+    callback open_group(string);
+    callback select_tab(int);
+    callback open_settings();
+    callback return_home();
+
+    spacing: 0px;
+    alignment: space-between;
+
+    // Header
+    SignalsHeader {
+        time_string: root.time_string;
+        sec_string: root.sec_string;
+        date_string: root.date_string;
+        battery_level: root.battery_level;
+        tag: "LIENS / 6 SIGNAUX";
+        title: "Des gens, pas des apps.";
+        subtitle: "Vos proches au centre. Le reste en retrait.";
+    }
+
+    // Central Constellation Graphical Area
+    VerticalLayout {
+        alignment: center;
+        spacing: 10px;
+
+        Rectangle {
+            height: 180px;
+            width: 100%;
+            background: transparent;
+
+            // Background subtle constellation connection lines
+            Path {
+                width: 100%;
+                height: 100%;
+                stroke: rgba(196, 181, 253, 0.25);
+                stroke-width: 1px;
+
+                // Center node is at (175, 90)
+                // Line to Lea (70, 45)
+                MoveTo { x: 70; y: 45; }
+                LineTo { x: 175; y: 90; }
+                // Line to Papa (280, 45)
+                MoveTo { x: 280; y: 45; }
+                LineTo { x: 175; y: 90; }
+                // Line to Maya (175, 145)
+                MoveTo { x: 175; y: 145; }
+                LineTo { x: 175; y: 90; }
+            }
+
+            // Satellite 1: Lea (Top Left)
+            sat1_touch := TouchArea {
+                x: 30px;
+                y: 20px;
+                width: 90px;
+                height: 45px;
+                clicked => { root.open_group("repondre"); }
+
+                VerticalLayout {
+                    alignment: center;
+                    spacing: 2px;
+                    Text { text: "Lea"; font-family: Theme.font_main; font-size: 12px; font-weight: 600; color: Theme.pastel_purple; horizontal-alignment: center; }
+                    Text { text: "Bien rentree ?"; font-family: Theme.font_main; font-size: 10px; color: Theme.text_muted; horizontal-alignment: center; }
+                }
+            }
+
+            // Satellite 2: Papa (Top Right)
+            sat2_touch := TouchArea {
+                x: 230px;
+                y: 20px;
+                width: 100px;
+                height: 45px;
+                clicked => { root.open_group("repondre"); }
+
+                VerticalLayout {
+                    alignment: center;
+                    spacing: 2px;
+                    Text { text: "Papa"; font-family: Theme.font_main; font-size: 12px; font-weight: 600; color: Theme.pastel_purple; horizontal-alignment: center; }
+                    Text { text: "Appelle-moi demain."; font-family: Theme.font_main; font-size: 9px; color: Theme.text_muted; horizontal-alignment: center; }
+                }
+            }
+
+            // Center Node: Proches 3
+            center_touch := TouchArea {
+                x: (parent.width - 76px) / 2;
+                y: (parent.height - 76px) / 2;
+                width: 76px;
+                height: 76px;
+                clicked => { root.open_group("repondre"); }
+
+                Rectangle {
+                    width: 76px;
+                    height: 76px;
+                    border-radius: 38px;
+                    background: center_touch.pressed ? Theme.pastel_purple_glow : Theme.surface;
+                    border-width: 1.5px;
+                    border-color: rgba(196, 181, 253, 0.45);
+
+                    VerticalLayout {
+                        alignment: center;
+                        spacing: 2px;
+                        Text { text: "Proches"; font-family: Theme.font_main; font-size: 11px; color: Theme.text_secondary; horizontal-alignment: center; }
+                        Text { text: "3"; font-family: Theme.font_main; font-size: 18px; font-weight: 300; color: Theme.text_primary; horizontal-alignment: center; }
+                    }
+                }
+            }
+
+            // Satellite 3: Maya (Bottom)
+            sat3_touch := TouchArea {
+                x: (parent.width - 100px) / 2;
+                y: 135px;
+                width: 100px;
+                height: 40px;
+                clicked => { root.open_group("repondre"); }
+
+                VerticalLayout {
+                    alignment: center;
+                    spacing: 2px;
+                    Text { text: "Maya"; font-family: Theme.font_main; font-size: 12px; font-weight: 600; color: Theme.pastel_purple; horizontal-alignment: center; }
+                    Text { text: "Un cafe demain ?"; font-family: Theme.font_main; font-size: 10px; color: Theme.text_muted; horizontal-alignment: center; }
+                }
+            }
+        }
+
+        // Secondary Links: Travail & Services
+        VerticalLayout {
+            spacing: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+
+            // Travail 1 +
+            work_touch := TouchArea {
+                height: 38px;
+                clicked => { root.open_group("prevoir"); }
+
+                Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    background: work_touch.pressed ? Theme.surface_light : Theme.surface;
+                    border-radius: Theme.border_radius_sm;
+
+                    HorizontalLayout {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        alignment: space-between;
+                        Text { text: "· Travail  1 +"; font-family: Theme.font_main; font-size: 12px; font-weight: 600; color: Theme.text_primary; vertical-alignment: center; }
+                        Text { text: "Studio · Les maquettes sont pretes."; font-family: Theme.font_main; font-size: 11px; color: Theme.text_muted; vertical-alignment: center; }
+                    }
+                }
+            }
+
+            // Services 2 +
+            serv_touch := TouchArea {
+                height: 38px;
+                clicked => { root.open_group("prevoir"); }
+
+                Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    background: serv_touch.pressed ? Theme.surface_light : Theme.surface;
+                    border-radius: Theme.border_radius_sm;
+
+                    HorizontalLayout {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        alignment: space-between;
+                        Text { text: "· Services  2 +"; font-family: Theme.font_main; font-size: 12px; font-weight: 600; color: Theme.text_primary; vertical-alignment: center; }
+                        Text { text: "Dentiste 09:30 · Lecture du soir"; font-family: Theme.font_main; font-size: 11px; color: Theme.text_muted; vertical-alignment: center; }
+                    }
+                }
+            }
+        }
+    }
+
+    Text {
+        text: "Touchez un lien pour vous rapprocher.";
+        font-family: Theme.font_main;
+        font-size: 11px;
+        color: Theme.text_muted;
+        horizontal-alignment: center;
+    }
+
+    // Tab Bar
+    SignalsTabBar {
+        active_tab: 1;
+        select_tab(index) => { root.select_tab(index); }
+        open_settings => { root.open_settings(); }
+        return_home => { root.return_home(); }
+    }
+}

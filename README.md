@@ -9,58 +9,119 @@ Pas de trucs lourds, pas d'emojis, juste KISS
 
 ## Comment lancer le projet
 
-Le developpement se fait sous WSL2 (Ubuntu). Pour y acceder depuis l'invite de commandes Windows (cmd ou PowerShell) :
+Le developpement et les tests complets se font sous **WSL2 (Ubuntu)** et dans l'emulateur mobile **QEMU postmarketOS**.
 
-```cmd
+---
+
+### Methode 1 : L'Emulateur Mobile Complet (QEMU + postmarketOS + Waydroid)
+
+C'est l'environnement reel du smartphone qui fait tourner le noyau Linux mobile, le compositeur Wayland et le conteneur Android Waydroid.
+
+#### 1. Ouvrir l'environnement WSL
+Depuis PowerShell ou CMD :
+```bash
 wsl --cd c:\Users\celestin\OS
 ```
 
-Ensuite, selon ce sur quoi tu bosses, il y a plusieurs facons de lancer :
-
-### 1. Le Hot Reload instantane (pour bosser sur l'UI)
-C'est le mode le plus rapide pour taffer sur le design sans attendre que Rust recompile a chaque fois.
-Comme les fichiers sont edites sous Windows, le binaire natif Windows `slint-viewer` est installe dans `.cargo/bin` pour assurer un rafraichissement immediat (< 10ms) a chaque sauvegarde (`Ctrl+S`) sans limitation WSL :
-
-Dans un terminal Windows PowerShell ou CMD :
-```powershell
-slint-viewer --auto-reload ui/shell.slint
-```
-
-*Note : Tu peux aussi installer l'extension officielle **Slint** dans l'editeur et cliquer sur le bouton "Show Preview" en haut a droite du fichier `ui/shell.slint` pour avoir le rendu interactif directement dans l'editeur.*
-
-### 2. Lancer l'application Rust complete
-Pour compiler et tester le simulateur complet avec la logique Rust :
-
+#### 2. Demarrer le telephone virtuel dans QEMU
+Dans ton premier terminal WSL :
 ```bash
-cargo run --bin osauce-shell
+pmbootstrap qemu --no-kvm --cpu max --image-size 8G --display sdl
 ```
+* Explication des options :
+  * `--cpu max` : Active les jeux d'instructions recents (SSSE3) requis par Android AOSP.
+  * `--image-size 8G` : Alloue l'espace suffisant pour LineageOS et les applications.
+  * `--display sdl` : Ouvre la fenetre graphique directement sous Windows via WSLg.
 
-### 3. Recompilation automatique (Rust + Slint)
-Si tu touches a la fois au code Rust (`src/main.rs`) et a l'interface :
-
+#### 3. Se connecter en SSH (terminal de commande)
+Ouvre un **second terminal WSL** (ou un onglet) pour piloter la VM avec ton clavier AZERTY et le copier-coller :
 ```bash
-cargo watch -x "run --bin osauce-shell"
+ssh -p 2222 user@localhost
 ```
+* Identifiants : utilisateur `user`, mot de passe `1234`.
+* Si tu utilises PowerShell directement : `wsl -e ssh -p 2222 user@localhost`.
+
+#### 4. Demarrer le serveur graphique (Weston) et Android (Waydroid)
+1. Dans la **fenetre QEMU** physique, tape :
+   ```bash
+   weston
+   ```
+   *(Le bureau graphique Wayland s'ouvre sur l'ecran du telephone).*
+2. Dans ton **terminal SSH**, lance la session Android :
+   ```bash
+   export WAYLAND_DISPLAY=wayland-1
+   waydroid session start &
+   waydroid show-full-ui
+   ```
+   *(L'interface Android s'affiche a l'ecran dans la fenetre QEMU).*
+
+#### 5. Installer des applications Android (APK)
+Dans le terminal SSH :
+```bash
+# 1. Telecharger l'APK (exemple : F-Droid Store d'apps open-source)
+wget -O F-Droid.apk https://f-droid.org/F-Droid.apk
+
+# 2. Installer le paquet dans le conteneur Waydroid
+waydroid app install F-Droid.apk
+```
+
+#### 6. Compiler et deployer le Shell OSauce (Rust) dans la VM
+Pour executer l'interface OSauce dans la machine virtuelle :
+```bash
+# Depuis ton terminal WSL principal (dans le dossier du projet) :
+cargo build --release --bin osauce-shell
+scp -P 2222 target/release/osauce-shell user@localhost:~
+
+# Dans le terminal SSH :
+export WAYLAND_DISPLAY=wayland-1
+./osauce-shell
+```
+
+---
+
+### Methode 2 : Le Simulateur Rapide sur PC (Dev UI & Hot Reload)
+
+Pour modifier le design et iterer sur l'interface Slint sans lancer l'emulateur complet :
+
+1. **Hot Reload instantane Slint** (rafraichissement a chaque sauvegarde) :
+   ```powershell
+   slint-viewer --auto-reload ui/shell.slint
+   ```
+2. **Simulateur natif Rust** :
+   ```bash
+   cargo run --bin osauce-shell
+   ```
+
+---
+
+### Commandes utiles et depannage
+
+* **Clavier AZERTY dans la fenetre QEMU directe** : `sudo loadkeys fr`
+* **Eteindre proprement la VM** : `sudo poweroff` (dans la console ou par SSH).
+* **Verifier l'espace disque dans la VM** : `df -h /`
+* **Verifier le conteneur Waydroid** : `waydroid status` et `systemctl status waydroid-container`
 
 ---
 
 ## Ce que j'ai appris et comment le projet est decoupe
 
 ### 1. Le decoupage des fichiers
-Au debut, tout etait inline dans un seul fichier `src/main.rs`. C'etait bien pour tester, mais vite bordelique. Du coup, on a separe proprement :
+* `ui/shell.slint` : Layout racine, navigation entre l'accueil et les vues de signaux.
+* `ui/views/` : Vues de l'application (accueil zen, intentions, liens humains, moments).
+* `ui/components/` : Composants reutilisables (carte calme, dock vectoriel, status bar).
+* `ui/styles/theme.slint` : Constantes graphiques, palette pastel et tokens d'animation.
+* `src/main.rs` : Moteur Rust, telemetrie materielle (batterie sysfs, horloge), gestion des callbacks et passerelle Waydroid.
 
-* `ui/shell.slint` : Tout ce qui concerne l'affichage (mise en page, couleurs, animations, boutons). C'est du code declaratif, simple a lire et a modifier.
-* `build.rs` : Un petit script de build qui dit a Cargo de compiler `ui/shell.slint` a l'avance lors du `cargo build`.
-* `src/main.rs` : Le code Rust de l'OS. Il importe le module genere avec `slint::include_modules!()`, configure l'affichage et demarre la boucle d'evenements.
+### 2. Architecture et Compatibilite Android
+* Le systeme hote est un Linux epure (postmarketOS sous Alpine).
+* La compatibilite applicative Android est assuree par Waydroid sans passer par un emulateur lourd : partage direct du noyau via `/dev/binder` et rendu GPU direct sur Wayland.
+* L'installation de paquets se fait via les APK dumpes depuis F-Droid ou l'API Google Play (Aurora Store) sans dependance aux composants privateurs Google Services.
 
-A terme, le dossier `ui/` sera decoupe en composants (`components/status_bar.slint`, `components/dock.slint`, `views/home.slint`), exactement comme sur un projet React ou Vue, pour ne jamais avoir un fichier de 1000 lignes.
+---
 
-### 2. Comment Rust et Slint communiquent
-* **Slint (la vue)** : Gere le layout et les animations materielles directes sur le GPU. Il expose des proprietes (par exemple l'heure ou le niveau de batterie) et des callbacks (par exemple quand on clique sur une appli).
-* **Rust (le cerveau)** : S'occupe du vrai systeme d'exploitation. Il va lire l'etat de la batterie via les fichiers systeme Linux, gerer l'horloge, et quand Slint lui dit "l'utilisateur a clique sur Web", c'est Rust qui lance le process ou le conteneur Waydroid en arriere-plan.
+## Documentation et Architecture
 
-### 3. Ce qui a coince au debut et comment ca a ete regle (WSLg & Windows 10)
-Faire tourner une fenetre graphique Linux sous Windows 10 via WSL2 a pose quelques pieges au demarrage :
-* **Les dependances manquantes** : Slint a besoin de bibliotheques systeme comme `libfontconfig1-dev` et `libxkbcommon-x11-0` pour initialiser le clavier et les polices sous Linux.
-* **Le bug de la fenetre blanche / COPY MODE** : Sur Windows 10, le serveur graphique WSLg (Weston) a besoin d'un point de montage en memoire partagee (`/mnt/shared_memory`). Sans ca, il se mettait en mode degrade et le rendu logiciel n'envoyait pas les frames. On a fixe ca en montant `/mnt/shared_memory` en tmpfs dans `/etc/fstab` et en basculant sur le moteur GPU Wayland natif via le pilote Mesa D3D12 (qui tourne a plus de 1500 FPS).
-* **Les logs** : Si on ne met pas de `println!` explicite dans `src/main.rs`, le simulateur se lance sans rien afficher dans le terminal, ce qui donnait l'impression que c'etait bloque alors que la fenetre etait simplement en arriere-plan.
+- Architecture logicielle detaillee : [`docs/ARCHITECTURE.md`](file:///c:/Users/celestin/OS/docs/ARCHITECTURE.md)
+- Guide de developpement Rust : [`docs/RUST_GUIDE.md`](file:///c:/Users/celestin/OS/docs/RUST_GUIDE.md)
+- Guide de developpement Slint UI : [`docs/SLINT_GUIDE.md`](file:///c:/Users/celestin/OS/docs/SLINT_GUIDE.md)
+

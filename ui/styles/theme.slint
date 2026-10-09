@@ -1,24 +1,37 @@
 // Global design system (colors, metrics, typography, animations)
 export global Theme {
-    // Pure dark OLED palette
-    out property <color> background: #030712;
-    out property <color> surface: #0b0f19;
-    out property <color> surface_light: #111827;
+    // Pure dark palette (fond presque noir apaisant)
+    out property <color> background: #07080c;
+    out property <color> background_elevated: #0d0f17;
+    out property <color> surface: rgba(255, 255, 255, 0.035);
+    out property <color> surface_light: rgba(255, 255, 255, 0.07);
     out property <color> surface_border: rgba(255, 255, 255, 0.07);
-    out property <color> surface_border_accent: rgba(56, 189, 248, 0.35);
+    out property <color> surface_border_light: rgba(255, 255, 255, 0.12);
 
-    // Accents
-    out property <color> primary: #38bdf8;
-    out property <color> primary_glow: rgba(56, 189, 248, 0.15);
-    out property <color> secondary: #818cf8;
-    out property <color> success: #34d399;
-    out property <color> warning: #fbbf24;
-    out property <color> danger: #f87171;
+    // Accents pastel doux (Signaux principaux et complements)
+    out property <color> pastel_purple: #c4b5fd;       // Violet pastel doux
+    out property <color> pastel_purple_deep: #8b5cf6;  // Violet accent
+    out property <color> pastel_purple_glow: rgba(196, 181, 253, 0.18);
+    out property <color> pastel_purple_subtle: rgba(196, 181, 253, 0.08);
+
+    out property <color> pastel_green: #86efac;        // Vert doux complementaire
+    out property <color> pastel_green_deep: #10b981;   // Vert accent
+    out property <color> pastel_green_glow: rgba(134, 239, 172, 0.18);
+    out property <color> pastel_green_subtle: rgba(134, 239, 172, 0.08);
+
+    // Primary & legacy accents
+    out property <color> primary: #c4b5fd;
+    out property <color> primary_glow: rgba(196, 181, 253, 0.15);
+    out property <color> secondary: #86efac;
+    out property <color> success: #86efac;
+    out property <color> warning: #fde047;
+    out property <color> danger: #fca5a5;
 
     // Typography colors
     out property <color> text_primary: #f8fafc;
     out property <color> text_secondary: #94a3b8;
-    out property <color> text_muted: #475569;
+    out property <color> text_muted: #525f7a;
+    out property <color> text_dim: #334155;
 
     // Fonts
     out property <string> font_main: "Inter, Segoe UI, sans-serif";
@@ -26,13 +39,15 @@ export global Theme {
 
     // Layout metrics
     out property <length> border_radius_pill: 9999px;
+    out property <length> border_radius_xl: 24px;
+    out property <length> border_radius_lg: 16px;
     out property <length> border_radius_md: 12px;
-    out property <length> border_radius_sm: 6px;
+    out property <length> border_radius_sm: 8px;
     out property <length> padding_screen: 24px;
 
-    // Fluid physics animations
+    // Fluid animations
     out property <duration> anim_instant: 90ms;
     out property <duration> anim_fast: 160ms;
-    out property <duration> anim_smooth: 300ms;
-    out property <duration> anim_spring: 420ms;
+    out property <duration> anim_smooth: 280ms;
+    out property <duration> anim_spring: 380ms;
 }

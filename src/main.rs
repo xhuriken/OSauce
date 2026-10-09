@@ -151,6 +151,55 @@ fn main() -> Result<(), slint::PlatformError> {
         }
     });
 
+    main_window.on_open_app(|app_name| {
+        println!("[OSauce::Launcher] Request to open application: {}", app_name);
+
+        // If running on Linux/postmarketOS with Waydroid, trigger the app launch
+        #[cfg(target_os = "linux")]
+        {
+            if app_name.contains('.') {
+                println!("[OSauce::Waydroid] Spawning: waydroid app launch {}", app_name);
+                let _ = std::process::Command::new("waydroid")
+                    .args(["app", "launch", app_name.as_str()])
+                    .spawn();
+            }
+        }
+    });
+
+    main_window.on_install_android_app(|app_name, download_url| {
+        println!(
+            "[OSauce::Store] User triggered installation of '{}' from '{}'",
+            app_name, download_url
+        );
+
+        // On Linux / postmarketOS, download in background and install into Waydroid
+        #[cfg(target_os = "linux")]
+        {
+            let name_clone = app_name.to_string();
+            let url_clone = download_url.to_string();
+            std::thread::spawn(move || {
+                let target_path = format!("/tmp/{}.apk", name_clone);
+                println!("[OSauce::Store] Downloading {} into {}...", url_clone, target_path);
+
+                let wget_status = std::process::Command::new("wget")
+                    .args(["-q", "-O", &target_path, &url_clone])
+                    .status();
+
+                if let Ok(st) = wget_status {
+                    if st.success() {
+                        println!("[OSauce::Store] Download successful. Invoking waydroid app install...");
+                        let _ = std::process::Command::new("waydroid")
+                            .args(["app", "install", &target_path])
+                            .status();
+                        println!("[OSauce::Store] Installation finished for {}", name_clone);
+                    } else {
+                        eprintln!("[OSauce::Store] Failed to download APK: exit code {:?}", st.code());
+                    }
+                }
+            });
+        }
+    });
+
     println!("[OSauce] Rendering started. Press Ctrl+C or close window to exit.");
     main_window.run()
 }

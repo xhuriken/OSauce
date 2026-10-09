@@ -1,152 +1,101 @@
 import { Theme } from "../styles/theme.slint";
 
-// Ultra-minimal status bar with dynamic vector clock icon and interactive battery gauge
+// Discrete top status bar (small clock in deep views, cellular bars, battery level)
 export component StatusBar inherits HorizontalLayout {
-    in-out property <string> time: "09:41";
-    in-out property <int> battery_level: 85; // 0 to 100
-    in-out property <bool> is_charging: false;
+    in-out property <int> battery_level: 84;
+    in-out property <bool> is_charging: true;
+    in-out property <bool> show_clock_small: false;
+    in-out property <string> time_string: "22:48";
+    in-out property <string> sec_string: "36";
 
-    height: 24px;
+    height: 20px;
     alignment: space-between;
 
-    // --- LEFT : Minimal Clock Icon & Time ---
+    // Left: empty spacer on home, small clock in deep views
     HorizontalLayout {
-        spacing: 6px;
+        spacing: 8px;
         alignment: start;
 
-        // Geometric Clock Icon (Pure SVG-like geometry)
-        VerticalLayout {
-            alignment: center;
-            Rectangle {
-                width: 14px;
-                height: 14px;
-                border-radius: Theme.border_radius_pill;
-                border-width: 1.4px;
-                border-color: Theme.text_primary;
+        if root.show_clock_small: HorizontalLayout {
+            spacing: 4px;
+            alignment: start;
 
-                // Center hub
-                Rectangle {
-                    width: 2px;
-                    height: 2px;
-                    border-radius: Theme.border_radius_pill;
-                    background: Theme.text_primary;
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                }
+            Text {
+                text: root.time_string;
+                font-family: Theme.font_mono;
+                font-size: 13px;
+                font-weight: 700;
+                color: Theme.text_primary;
+                vertical-alignment: center;
+            }
 
-                // Minute hand (pointing right)
-                Rectangle {
-                    width: 4px;
-                    height: 1px;
-                    background: Theme.text_primary;
-                    x: (parent.width / 2);
-                    y: (parent.height - self.height) / 2;
-                }
-
-                // Hour hand (pointing up)
-                Rectangle {
-                    width: 1px;
-                    height: 4px;
-                    background: Theme.text_primary;
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height / 2) - self.height;
-                }
+            Text {
+                text: root.sec_string;
+                font-family: Theme.font_mono;
+                font-size: 10px;
+                color: Theme.pastel_green;
+                vertical-alignment: center;
             }
         }
-
-        // Current system time
-        Text {
-            text: root.time;
-            color: Theme.text_primary;
-            font-size: 13px;
-            font-weight: 700;
-            vertical-alignment: center;
-        }
     }
 
-    // Flexible layout spacer
-    Rectangle {
-        horizontal-stretch: 1;
-    }
-
-    // --- RIGHT : Interactive Dynamic Battery Gauge ---
+    // Right: Signal bars and battery percentage
     HorizontalLayout {
-        spacing: 6px;
+        spacing: 8px;
         alignment: end;
 
-        // Battery percentage text
-        Text {
-            text: root.is_charging ? "\{root.battery_level}% CHG" : "\{root.battery_level}%";
-            color: root.is_charging ? Theme.primary : (root.battery_level <= 20 ? Theme.danger : Theme.text_secondary);
-            font-size: 11px;
-            font-weight: 700;
-            vertical-alignment: center;
-        }
-
-        // Vector Battery Shell with fluid interior level
-        VerticalLayout {
+        // Minimal cellular signal bars (3 bars)
+        HorizontalLayout {
+            spacing: 2px;
             alignment: center;
 
-            HorizontalLayout {
-                spacing: 1px;
-                alignment: center;
-
-                // Main body
-                Rectangle {
-                    width: 22px;
-                    height: 12px;
-                    border-radius: 3px;
-                    border-width: 1.2px;
-                    border-color: root.is_charging ? Theme.primary : Theme.text_primary;
-
-                    // Interior liquid charge fill
-                    Rectangle {
-                        x: 2px;
-                        y: 2px;
-                        height: parent.height - 4px;
-                        width: Math.max(2px, (parent.width - 4px) * root.battery_level / 100);
-                        border-radius: 1.5px;
-                        background: root.is_charging ? Theme.primary : (root.battery_level <= 20 ? Theme.danger : (root.battery_level <= 40 ? Theme.warning : Theme.success));
-
-                        animate width, background {
-                            duration: Theme.anim_fast;
-                            easing: ease-out;
-                        }
-                    }
-                }
-
-                // Positive terminal nub
-                VerticalLayout {
-                    alignment: center;
-                    Rectangle {
-                        width: 2px;
-                        height: 5px;
-                        border-radius: 1px;
-                        background: root.is_charging ? Theme.primary : Theme.text_primary;
-                    }
-                }
-            }
+            Rectangle { width: 3px; height: 4px; border-radius: 1px; background: Theme.text_muted; y: 6px; }
+            Rectangle { width: 3px; height: 7px; border-radius: 1px; background: Theme.text_muted; y: 3px; }
+            Rectangle { width: 3px; height: 10px; border-radius: 1px; background: Theme.text_secondary; y: 0px; }
         }
 
-        // Tap on battery to test dynamicity (cycles levels & charging state)
-        TouchArea {
-            clicked => {
-                if root.battery_level == 100 {
-                    root.battery_level = 68;
-                    root.is_charging = false;
-                } else if root.battery_level == 68 {
-                    root.battery_level = 35;
-                    root.is_charging = false;
-                } else if root.battery_level == 35 {
-                    root.battery_level = 14;
-                    root.is_charging = false;
-                } else if root.battery_level == 14 {
-                    root.battery_level = 88;
-                    root.is_charging = true;
-                } else {
-                    root.battery_level = 100;
-                    root.is_charging = false;
+        // Battery indicator
+        HorizontalLayout {
+            spacing: 4px;
+            alignment: center;
+
+            // Vector battery icon
+            Rectangle {
+                width: 18px;
+                height: 9px;
+                border-radius: 2px;
+                border-width: 1px;
+                border-color: Theme.text_secondary;
+                background: transparent;
+
+                // Battery fill
+                Rectangle {
+                    x: 1.5px;
+                    y: 1.5px;
+                    height: 5px;
+                    width: (parent.width - 3px) * (root.battery_level / 100);
+                    border-radius: 1px;
+                    background: root.is_charging ? Theme.pastel_green : (root.battery_level < 20 ? Theme.danger : Theme.text_primary);
                 }
+
+                // Positive pole pin
+                Rectangle {
+                    x: parent.width;
+                    y: 2.5px;
+                    width: 2px;
+                    height: 4px;
+                    border-radius: 1px;
+                    background: Theme.text_secondary;
+                }
+            }
+
+            Text {
+                text: "\{root.battery_level}%";
+                font-family: Theme.font_mono;
+                font-size: 11px;
+                font-weight: 600;
+                color: Theme.text_secondary;
+                vertical-alignment: center;
             }
         }
     }

@@ -1,0 +1,233 @@
+import { Theme } from "../styles/theme.slint";
+import { StatusBar } from "../components/status_bar.slint";
+import { CalmCard } from "../components/calm_card.slint";
+import { Dock } from "../components/dock.slint";
+
+// Main Zen Home Screen matching mockup 1 & 7
+export component HomeView inherits VerticalLayout {
+    in-out property <int> hours: 22;
+    in-out property <int> minutes: 48;
+    in-out property <int> seconds: 36;
+    in-out property <string> date_string: "Lundi 5 octobre 2026";
+    in-out property <int> battery_level: 84;
+    in-out property <bool> is_charging: true;
+    in-out property <bool> all_masked: false;
+    in-out property <int> signal_count: 6;
+
+    callback open_signals();
+    callback open_phone();
+    callback open_messages();
+    callback open_camera();
+    callback open_apps();
+
+    spacing: 0px;
+    alignment: space-between;
+
+    // --- TOP: Large Clock & System Status ---
+    VerticalLayout {
+        spacing: 14px;
+        alignment: start;
+        padding-top: 24px;
+
+        // Big Clock row with seconds
+        HorizontalLayout {
+            alignment: center;
+            spacing: 6px;
+
+            Text {
+                text: (root.hours < 10 ? "0" : "") + "\{root.hours}:" + (root.minutes < 10 ? "0" : "") + "\{root.minutes}";
+                font-family: Theme.font_main;
+                font-size: 72px;
+                font-weight: 300;
+                color: Theme.text_primary;
+                vertical-alignment: center;
+                letter-spacing: -2px;
+            }
+
+            // Seconds badge
+            VerticalLayout {
+                alignment: center;
+                padding-bottom: 8px;
+                spacing: 0px;
+
+                Text {
+                    text: (root.seconds < 10 ? "0" : "") + "\{root.seconds}";
+                    font-family: Theme.font_mono;
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: Theme.pastel_green;
+                    horizontal-alignment: center;
+                }
+
+                Text {
+                    text: "SEC";
+                    font-family: Theme.font_main;
+                    font-size: 9px;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                    color: Theme.text_muted;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+
+        // Date string
+        Text {
+            text: root.date_string;
+            font-family: Theme.font_main;
+            font-size: 14px;
+            font-weight: 400;
+            color: Theme.text_secondary;
+            horizontal-alignment: center;
+        }
+
+        // Pill battery status
+        HorizontalLayout {
+            alignment: center;
+
+            Rectangle {
+                height: 24px;
+                border-radius: Theme.border_radius_pill;
+                background: Theme.surface;
+                border-width: 1px;
+                border-color: Theme.surface_border;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    spacing: 6px;
+                    alignment: center;
+
+                    // Battery icon
+                    Rectangle {
+                        width: 12px;
+                        height: 7px;
+                        border-radius: 1px;
+                        border-width: 1px;
+                        border-color: Theme.pastel_green;
+                        background: transparent;
+
+                        Rectangle {
+                            x: 1px;
+                            y: 1px;
+                            width: (parent.width - 2px) * (root.battery_level / 100);
+                            height: 3px;
+                            background: Theme.pastel_green;
+                            border-radius: 0.5px;
+                        }
+                    }
+
+                    Text {
+                        text: "\{root.battery_level} %  ·  " + (root.is_charging ? "En charge" : "Sur batterie");
+                        font-family: Theme.font_main;
+                        font-size: 11px;
+                        font-weight: 500;
+                        color: Theme.text_secondary;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+
+    // --- CENTER: Atmospheric Calm Landscape Card ---
+    VerticalLayout {
+        spacing: 12px;
+        alignment: center;
+        padding-left: 4px;
+        padding-right: 4px;
+
+        CalmCard {}
+
+        // Subtitle & Pagination dots
+        HorizontalLayout {
+            alignment: space-between;
+            padding-left: 6px;
+            padding-right: 6px;
+
+            Text {
+                text: root.all_masked ? "Un peu de silence." : "Respirer.";
+                font-family: Theme.font_main;
+                font-size: 12px;
+                color: Theme.text_muted;
+                vertical-alignment: center;
+            }
+
+            // Pagination indicators
+            HorizontalLayout {
+                spacing: 4px;
+                alignment: center;
+
+                Rectangle {
+                    width: 14px;
+                    height: 3px;
+                    border-radius: 1.5px;
+                    background: Theme.pastel_purple;
+                }
+                Rectangle {
+                    width: 3px;
+                    height: 3px;
+                    border-radius: 1.5px;
+                    background: Theme.text_muted;
+                }
+            }
+        }
+
+        // --- DISCRETE SIGNALS ACCESS TRIGGER ---
+        signals_trigger := TouchArea {
+            height: 38px;
+            clicked => { root.open_signals(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: Theme.border_radius_md;
+                background: signals_trigger.pressed ? Theme.surface_light : Theme.surface;
+                border-width: 1px;
+                border-color: signals_trigger.pressed ? Theme.pastel_purple_glow : Theme.surface_border;
+
+                animate background, border-color { duration: Theme.anim_fast; }
+
+                HorizontalLayout {
+                    alignment: center;
+                    spacing: 8px;
+
+                    // Eye / Notification discreet vector glyph
+                    Path {
+                        width: 14px;
+                        height: 10px;
+                        y: (parent.height - self.height) / 2;
+                        stroke: root.all_masked ? Theme.text_muted : Theme.pastel_purple;
+                        stroke-width: 1.3px;
+
+                        MoveTo { x: 0; y: 5; }
+                        LineTo { x: 7; y: 0; }
+                        LineTo { x: 14; y: 5; }
+                        LineTo { x: 7; y: 10; }
+                        Close {}
+                    }
+
+                    Text {
+                        text: root.all_masked ?
+                            "\{root.signal_count} signaux masques  ·  Voir  >" :
+                            "\{root.signal_count} signaux en attente  ·  Ouvrir  >";
+                        font-family: Theme.font_main;
+                        font-size: 12px;
+                        font-weight: 500;
+                        color: root.all_masked ? Theme.text_muted : Theme.pastel_purple;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+
+    // --- BOTTOM: App Shortcuts Dock ---
+    Dock {
+        show_all_apps: !root.all_masked;
+        open_phone => { root.open_phone(); }
+        open_messages => { root.open_messages(); }
+        open_camera => { root.open_camera(); }
+        open_apps => { root.open_apps(); }
+    }
+}

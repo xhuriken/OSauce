@@ -1,0 +1,371 @@
+import { Theme } from "../styles/theme.slint";
+import { SignalsHeader } from "../components/signals_header.slint";
+
+// Signals Settings & Sorting View (Mockup 6: A votre facon / Faire de la place)
+export component SignalsSettings inherits VerticalLayout {
+    in-out property <string> time_string: "22:48";
+    in-out property <string> sec_string: "36";
+    in-out property <string> date_string: "Lundi 5 octobre 2026";
+    in-out property <int> battery_level: 84;
+    in-out property <int> presentation_mode: 0; // 0 = Intentions, 1 = Liens, 2 = Moments
+    in-out property <bool> single_group_mode: true;
+    in-out property <bool> all_masked: false;
+
+    callback set_presentation(int);
+    callback toggle_single_group();
+    callback toggle_mask_all();
+    callback go_back();
+
+    spacing: 0px;
+    alignment: space-between;
+
+    // Header
+    SignalsHeader {
+        time_string: root.time_string;
+        sec_string: root.sec_string;
+        date_string: root.date_string;
+        battery_level: root.battery_level;
+        tag: "VOTRE ESPACE";
+        title: "A votre facon.";
+        subtitle: "La meme vie. Trois facons de la lire.";
+    }
+
+    // Presentation mode radios
+    VerticalLayout {
+        spacing: 12px;
+        padding-top: 6px;
+
+        // Option 0: Intentions
+        opt0_touch := TouchArea {
+            height: 48px;
+            clicked => { root.set_presentation(0); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                background: opt0_touch.pressed ? Theme.surface_light : Theme.surface;
+                border-radius: Theme.border_radius_md;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    alignment: space-between;
+
+                    HorizontalLayout {
+                        spacing: 10px;
+                        alignment: start;
+
+                        // 3 circles mini icon
+                        Rectangle {
+                            width: 18px;
+                            height: 18px;
+                            background: transparent;
+                            y: (parent.height - self.height) / 2;
+
+                            Rectangle { x: 5px; y: 1px; width: 8px; height: 8px; border-radius: 4px; border-width: 1px; border-color: Theme.pastel_purple; }
+                            Rectangle { x: 1px; y: 9px; width: 6px; height: 6px; border-radius: 3px; border-width: 1px; border-color: Theme.pastel_green; }
+                            Rectangle { x: 10px; y: 9px; width: 6px; height: 6px; border-radius: 3px; border-width: 1px; border-color: Theme.pastel_purple; }
+                        }
+
+                        VerticalLayout {
+                            alignment: center;
+                            spacing: 1px;
+                            Text { text: "Intentions"; font-family: Theme.font_main; font-size: 13px; font-weight: 500; color: Theme.text_primary; }
+                            Text { text: "Repondre · Prevoir · Pour soi"; font-family: Theme.font_main; font-size: 10px; color: Theme.text_muted; }
+                        }
+                    }
+
+                    // Radio indicator
+                    Rectangle {
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 8px;
+                        border-width: 1.5px;
+                        border-color: root.presentation_mode == 0 ? Theme.pastel_purple : Theme.text_muted;
+                        background: transparent;
+                        y: (parent.height - self.height) / 2;
+
+                        if root.presentation_mode == 0: Rectangle {
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 4px;
+                            background: Theme.pastel_purple;
+                            x: (parent.width - self.width) / 2;
+                            y: (parent.height - self.height) / 2;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Option 1: Liens humains
+        opt1_touch := TouchArea {
+            height: 48px;
+            clicked => { root.set_presentation(1); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                background: opt1_touch.pressed ? Theme.surface_light : Theme.surface;
+                border-radius: Theme.border_radius_md;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    alignment: space-between;
+
+                    HorizontalLayout {
+                        spacing: 10px;
+                        alignment: start;
+
+                        // Constellation mini icon
+                        Rectangle {
+                            width: 18px;
+                            height: 18px;
+                            background: transparent;
+                            y: (parent.height - self.height) / 2;
+
+                            Rectangle { x: 8px; y: 8px; width: 4px; height: 4px; border-radius: 2px; background: Theme.pastel_purple; }
+                            Rectangle { x: 2px; y: 3px; width: 3px; height: 3px; border-radius: 1.5px; background: Theme.text_muted; }
+                            Rectangle { x: 13px; y: 13px; width: 3px; height: 3px; border-radius: 1.5px; background: Theme.text_muted; }
+                        }
+
+                        VerticalLayout {
+                            alignment: center;
+                            spacing: 1px;
+                            Text { text: "Liens humains"; font-family: Theme.font_main; font-size: 13px; font-weight: 500; color: Theme.text_primary; }
+                            Text { text: "Proches · Travail · Services"; font-family: Theme.font_main; font-size: 10px; color: Theme.text_muted; }
+                        }
+                    }
+
+                    Rectangle {
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 8px;
+                        border-width: 1.5px;
+                        border-color: root.presentation_mode == 1 ? Theme.pastel_purple : Theme.text_muted;
+                        background: transparent;
+                        y: (parent.height - self.height) / 2;
+
+                        if root.presentation_mode == 1: Rectangle {
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 4px;
+                            background: Theme.pastel_purple;
+                            x: (parent.width - self.width) / 2;
+                            y: (parent.height - self.height) / 2;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Option 2: Moments
+        opt2_touch := TouchArea {
+            height: 48px;
+            clicked => { root.set_presentation(2); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                background: opt2_touch.pressed ? Theme.surface_light : Theme.surface;
+                border-radius: Theme.border_radius_md;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    alignment: space-between;
+
+                    HorizontalLayout {
+                        spacing: 10px;
+                        alignment: start;
+
+                        // Wavy line mini icon
+                        Rectangle {
+                            width: 18px;
+                            height: 18px;
+                            background: transparent;
+                            y: (parent.height - self.height) / 2;
+
+                            Rectangle { x: 3px; y: 3px; width: 3px; height: 3px; border-radius: 1.5px; background: Theme.pastel_purple; }
+                            Rectangle { x: 12px; y: 8px; width: 3px; height: 3px; border-radius: 1.5px; background: Theme.pastel_green; }
+                            Rectangle { x: 3px; y: 13px; width: 3px; height: 3px; border-radius: 1.5px; background: Theme.pastel_purple; }
+                        }
+
+                        VerticalLayout {
+                            alignment: center;
+                            spacing: 1px;
+                            Text { text: "Moments"; font-family: Theme.font_main; font-size: 13px; font-weight: 500; color: Theme.text_primary; }
+                            Text { text: "Ce soir · Demain · A votre rythme"; font-family: Theme.font_main; font-size: 10px; color: Theme.text_muted; }
+                        }
+                    }
+
+                    Rectangle {
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 8px;
+                        border-width: 1.5px;
+                        border-color: root.presentation_mode == 2 ? Theme.pastel_purple : Theme.text_muted;
+                        background: transparent;
+                        y: (parent.height - self.height) / 2;
+
+                        if root.presentation_mode == 2: Rectangle {
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 4px;
+                            background: Theme.pastel_purple;
+                            x: (parent.width - self.width) / 2;
+                            y: (parent.height - self.height) / 2;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Section: Faire de la place
+    VerticalLayout {
+        spacing: 10px;
+        padding-top: 10px;
+
+        Text {
+            text: "FAIRE DE LA PLACE";
+            font-family: Theme.font_main;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            color: Theme.text_muted;
+        }
+
+        // Toggle Switch: Un groupe a la fois
+        toggle_touch := TouchArea {
+            height: 44px;
+            clicked => { root.toggle_single_group(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                background: transparent;
+
+                HorizontalLayout {
+                    alignment: space-between;
+
+                    VerticalLayout {
+                        alignment: center;
+                        spacing: 2px;
+                        Text { text: "Un groupe a la fois"; font-family: Theme.font_main; font-size: 13px; font-weight: 500; color: Theme.text_primary; }
+                        Text { text: "A l'ouverture, les autres s'effacent."; font-family: Theme.font_main; font-size: 10px; color: Theme.text_muted; }
+                    }
+
+                    // Vector Switch Pill
+                    Rectangle {
+                        width: 38px;
+                        height: 22px;
+                        border-radius: 11px;
+                        background: root.single_group_mode ? Theme.pastel_green : Theme.surface_border;
+                        y: (parent.height - self.height) / 2;
+
+                        animate background { duration: Theme.anim_fast; }
+
+                        // Knob
+                        Rectangle {
+                            width: 18px;
+                            height: 18px;
+                            border-radius: 9px;
+                            background: #07080c;
+                            y: 2px;
+                            x: root.single_group_mode ? 18px : 2px;
+
+                            animate x { duration: Theme.anim_fast; easing: ease-out; }
+                        }
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "Besoin de silence ? Vos signaux masques restent accessibles depuis l'accueil.";
+            font-family: Theme.font_main;
+            font-size: 11px;
+            color: Theme.text_muted;
+            wrap: word-wrap;
+        }
+
+        // Big Button: Masquer les 6 signaux
+        mask_touch := TouchArea {
+            height: 48px;
+            clicked => { root.toggle_mask_all(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: Theme.border_radius_pill;
+                background: mask_touch.pressed ? Theme.surface_light : Theme.surface;
+                border-width: 1px;
+                border-color: root.all_masked ? Theme.pastel_purple : Theme.surface_border;
+
+                animate background, border-color { duration: Theme.anim_fast; }
+
+                HorizontalLayout {
+                    alignment: center;
+                    spacing: 8px;
+
+                    // Eye slashed glyph
+                    Path {
+                        width: 14px;
+                        height: 10px;
+                        y: (parent.height - self.height) / 2;
+                        stroke: Theme.text_primary;
+                        stroke-width: 1.3px;
+
+                        MoveTo { x: 0; y: 5; }
+                        LineTo { x: 7; y: 0; }
+                        LineTo { x: 14; y: 5; }
+                        LineTo { x: 7; y: 10; }
+                        Close {}
+                    }
+
+                    Text {
+                        text: root.all_masked ? "Re-afficher les 6 signaux" : "Masquer les 6 signaux";
+                        font-family: Theme.font_main;
+                        font-size: 13px;
+                        font-weight: 500;
+                        color: Theme.text_primary;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "Masques, pas supprimes.";
+            font-family: Theme.font_main;
+            font-size: 10px;
+            color: Theme.text_muted;
+            horizontal-alignment: center;
+        }
+    }
+
+    // Bottom back button
+    HorizontalLayout {
+        alignment: center;
+        padding-bottom: 20px;
+
+        back_touch := TouchArea {
+            height: 32px;
+            clicked => { root.go_back(); }
+
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: center;
+
+                Text {
+                    text: "<  Retour aux signaux";
+                    font-family: Theme.font_main;
+                    font-size: 12px;
+                    color: back_touch.pressed ? Theme.text_primary : Theme.text_secondary;
+                }
+            }
+        }
+    }
+}

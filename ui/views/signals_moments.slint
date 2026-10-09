@@ -1,0 +1,160 @@
+import { Theme } from "../styles/theme.slint";
+import { SignalsHeader } from "../components/signals_header.slint";
+import { SignalsTabBar } from "../components/signals_tab_bar.slint";
+
+// Signals View 3: Moments (Vertical calming timeline: chaque chose a son heure)
+export component SignalsMoments inherits VerticalLayout {
+    in-out property <string> time_string: "22:48";
+    in-out property <string> sec_string: "36";
+    in-out property <string> date_string: "Lundi 5 octobre 2026";
+    in-out property <int> battery_level: 84;
+
+    callback open_group(string);
+    callback select_tab(int);
+    callback open_settings();
+    callback return_home();
+
+    spacing: 0px;
+    alignment: space-between;
+
+    // Header
+    SignalsHeader {
+        time_string: root.time_string;
+        sec_string: root.sec_string;
+        date_string: root.date_string;
+        battery_level: root.battery_level;
+        tag: "MOMENTS / 6 SIGNAUX";
+        title: "Chaque chose a son heure.";
+        subtitle: "Pas tout maintenant. Pas tout en meme temps.";
+    }
+
+    // Vertical Timeline
+    VerticalLayout {
+        spacing: 16px;
+        alignment: center;
+        padding-left: 10px;
+        padding-right: 10px;
+
+        // SECTION 1: Maintenant / Ce soir
+        m1_touch := TouchArea {
+            clicked => { root.open_group("repondre"); }
+
+            HorizontalLayout {
+                spacing: 14px;
+                alignment: start;
+
+                // Vertical timeline node with connecting stem
+                VerticalLayout {
+                    alignment: start;
+                    padding-top: 4px;
+                    width: 12px;
+
+                    Rectangle {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 5px;
+                        background: Theme.pastel_purple;
+                    }
+                    Rectangle {
+                        width: 1.5px;
+                        height: 50px;
+                        background: rgba(196, 181, 253, 0.3);
+                        x: 4.25px;
+                    }
+                }
+
+                VerticalLayout {
+                    spacing: 3px;
+                    Text { text: "MAINTENANT"; font-family: Theme.font_main; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: Theme.text_muted; }
+                    Text { text: "Ce soir  2 +"; font-family: Theme.font_main; font-size: 15px; font-weight: 400; color: Theme.text_primary; }
+                    Text { text: "Lea · Bien rentree ?"; font-family: Theme.font_main; font-size: 11px; color: Theme.text_secondary; }
+                    Text { text: "Lecture · Votre lecture du soir"; font-family: Theme.font_main; font-size: 11px; color: Theme.text_muted; }
+                }
+            }
+        }
+
+        // SECTION 2: A partir de 09:00 / Demain matin
+        m2_touch := TouchArea {
+            clicked => { root.open_group("prevoir"); }
+
+            HorizontalLayout {
+                spacing: 14px;
+                alignment: start;
+
+                VerticalLayout {
+                    alignment: start;
+                    padding-top: 4px;
+                    width: 12px;
+
+                    Rectangle {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 5px;
+                        background: Theme.pastel_green;
+                    }
+                    Rectangle {
+                        width: 1.5px;
+                        height: 50px;
+                        background: rgba(134, 239, 172, 0.3);
+                        x: 4.25px;
+                    }
+                }
+
+                VerticalLayout {
+                    spacing: 3px;
+                    Text { text: "A PARTIR DE 09:00"; font-family: Theme.font_main; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: Theme.text_muted; }
+                    Text { text: "Demain matin  2 +"; font-family: Theme.font_main; font-size: 15px; font-weight: 400; color: Theme.text_primary; }
+                    Text { text: "Agenda · Dentiste - demain, 09:30"; font-family: Theme.font_main; font-size: 11px; color: Theme.text_secondary; }
+                    Text { text: "Studio · Les maquettes sont pretes."; font-family: Theme.font_main; font-size: 11px; color: Theme.text_muted; }
+                }
+            }
+        }
+
+        // SECTION 3: Sans heure / A votre rythme
+        m3_touch := TouchArea {
+            clicked => { root.open_group("pour_soi"); }
+
+            HorizontalLayout {
+                spacing: 14px;
+                alignment: start;
+
+                VerticalLayout {
+                    alignment: start;
+                    padding-top: 4px;
+                    width: 12px;
+
+                    Rectangle {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 5px;
+                        background: Theme.pastel_purple;
+                    }
+                }
+
+                VerticalLayout {
+                    spacing: 3px;
+                    Text { text: "SANS HEURE"; font-family: Theme.font_main; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: Theme.text_muted; }
+                    Text { text: "A votre rythme  2 +"; font-family: Theme.font_main; font-size: 15px; font-weight: 400; color: Theme.text_primary; }
+                    Text { text: "Papa · Appelle-moi demain."; font-family: Theme.font_main; font-size: 11px; color: Theme.text_secondary; }
+                    Text { text: "Maya · Un cafe demain ?"; font-family: Theme.font_main; font-size: 11px; color: Theme.text_muted; }
+                }
+            }
+        }
+    }
+
+    Text {
+        text: "Ouvrez un moment. Les autres attendront.";
+        font-family: Theme.font_main;
+        font-size: 11px;
+        color: Theme.text_muted;
+        horizontal-alignment: center;
+    }
+
+    // Tab Bar
+    SignalsTabBar {
+        active_tab: 2;
+        select_tab(index) => { root.select_tab(index); }
+        open_settings => { root.open_settings(); }
+        return_home => { root.return_home(); }
+    }
+}
