@@ -9,6 +9,7 @@ plugins {
 sonar {
     properties {
         property("sonar.projectKey", "xhuriken_OSauce")
+        property("sonar.organization", "xhuriken")
         property("sonar.projectName", "OSauce")
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.host.url", "https://sonarcloud.io")
