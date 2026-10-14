@@ -97,3 +97,11 @@ app/build/
 output.json
 local.properties
 
+
+# Secrets & Configurations Locales B-Board (Auto-généré)
+.env.local
+.env*.local
+.cursor/mcp.json
+.vscode/mcp.json
+.agents/mcp_config.json
+mcp_config.json

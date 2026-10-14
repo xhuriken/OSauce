@@ -71,6 +71,6 @@ fun rememberSilenceState(): SilenceDisplayData {
         time = formattedTime,
         seconds = formattedSeconds,
         fullDate = formattedDate,
-        batteryStatus = "$batteryPercentage · Veille sobre"
+        batteryStatus = "$batteryPercentage"
     )
 }
