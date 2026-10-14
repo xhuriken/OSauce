@@ -1,54 +1,56 @@
-# Grille d'Evaluation - Le Numerique Responsable (10 Parametres Cles)
+# Grille d'Évaluation - Le Numérique Responsable (10 Paramètres Clés) - OpenSauce (O.Sauce)
 
-Ce document formalise la selection des 10 parametres de Numerique Responsable (2 par colonne) a cocher avec des pastilles vertes sur la grille d'evaluation de l'ecole, ainsi que les justifications techniques associees au projet OSauce.
+Ce document formalise la sélection des 10 paramètres de Numérique Responsable (2 par colonne) à cocher avec des pastilles vertes sur la grille d'évaluation, ainsi que les justifications techniques associées au Launcher sobre **OpenSauce (Aka O.Sauce)**.
+
 ![alt text](image.png)
+
 ---
 
-## Synthese Visuelle des 10 Pastilles Vertes
+## Synthèse Visuelle des 10 Pastilles Vertes
 
-| Colonne | Parametre 1 Selectionne | Parametre 2 Selectionne |
+| Colonne | Paramètre 1 Sélectionné | Paramètre 2 Sélectionné |
 | :--- | :--- | :--- |
-| **1. Responsable** | **Sobriete des ressources** (code leger, stockage optimise, reutilisation) | **Moins de dependance a des systemes fermes** (logiciels open source) |
-| **2. Ethique** | **Anti-obsolescence, consommation raisonnee** (allonger la duree de vie des appareils) | **Respect de la vie privee et souverainete numerique** (sans tracage) |
-| **3. Inclusif** | **Acces facilite aux equipements reconditionnes** (telephones reconditionnes a bas cout) | **Services fiables et adaptes aux appareils modestes** (OS leger < 150 Mo de RAM) |
-| **4. Securise** | **Reduction des failles et risques d'attaques** (code Rust sans buffer overflow) | **Conformite reglementaire & RGPD, chiffrement** (Privacy by Design) |
-| **5. Design responsable** | **Compatibilite avec anciens appareils, interfaces simples** (rendu 60/120 FPS sur GPU modeste) | **Anti-dark patterns, interfaces lisibles et sobres** (zero badge rouge, fond OLED pur) |
+| **1. Responsable** | **Sobriété des ressources** (code léger, APK ~15 Mo, zéro wakelock parasite) | **Moins de dépendance à des systèmes fermés** (100% open source, F-Droid) |
+| **2. Éthique** | **Anti-obsolescence, consommation raisonnée** (allonger la vie des téléphones de 3 ans) | **Respect de la vie privée et souveraineté** (traitement local, zéro pistage) |
+| **3. Inclusif** | **Accès facilité aux équipements reconditionnés** (packs smartphones reconditionnés éthiques) | **Services fiables et adaptés aux appareils modestes** (fluide dès Android 9) |
+| **4. Sécurisé** | **Réduction des failles et risques d'attaques** (sécurité matérielle et chiffrement préservés) | **Conformité réglementaire & RGPD** (Privacy by Design, zéro donnée collectée) |
+| **5. Design responsable** | **Compatibilité avec anciens appareils, interface économe** (rendu 60/120 FPS sur GPU modeste) | **Anti-dark patterns, interfaces lisibles et sobres** (zéro badge rouge, fond OLED pur) |
 
 ---
 
-## Justifications Detaillees par Colonne (Arguments Oral / Soutenance)
+## Justifications Détaillées par Colonne (Arguments Oral / Soutenance)
 
 ### Colonne 1 : Responsable
 
-1. **Pastille 1 : Sobriete des ressources (code leger, stockage optimise, reutilisation)**
-   - *Application concrete dans OSauce* : Empreinte memoire reduite a moins de 150 Mo de RAM (contre plus de 3 Go pour Android a vide). Binaire compile en Rust sans machine virtuelle lourde ni garbage collector.
-2. **Pastille 2 : Moins de dependance a des systemes fermes (logiciels open source)**
-   - *Application concrete dans OSauce* : Systeme 100% ouvert base sur le noyau Linux (postmarketOS), le toolkit Slint et Rust, s'affranchissant du monopole ferme des Google Play Services et d'iOS.
+1. **Pastille 1 : Sobriété des ressources (code léger, stockage optimisé, réutilisation)**
+   * *Application concrète dans OpenSauce* : Binaire applicatif compact (APK ~15 Mo contre plusieurs gigaoctets pour les surcouches constructeurs). Code natif Kotlin avec Jetpack Compose optimisé pour minimiser l'usage du CPU et de la RAM. Zéro service d'arrière-plan caché, zéro wakelock parasite réveillant l'appareil en veille.
+2. **Pastille 2 : Moins de dépendance à des systèmes fermés (logiciels open source)**
+   * *Application concrète dans OpenSauce* : Projet 100% libre et gratuit (licence open source) distribué via F-Droid et en téléchargement direct. Ne crée aucune dépendance à des services publicitaires propriétaires et n'enferme pas l'utilisateur dans un écosystème commercial fermé.
 
-### Colonne 2 : Ethique
+### Colonne 2 : Éthique
 
-1. **Pastille 1 : Anti-obsolescence, consommation raisonnee (allonger la duree de vie des appareils)**
-   - *Application concrete dans OSauce* : Coeur de mission du projet. Permettre a un smartphone de 4 a 6 ans de fonctionner avec une reactivite instantanee sans etre ralenti artificiellement par les mises a jour lourdes des constructeurs.
-2. **Pastille 2 : Respect de la vie privee et souverainete numerique (sans tracage)**
-   - *Application concrete dans OSauce* : Elimination totale des traceurs publicitaires et des daemons de telemetrie intrusive. Fonctionnement 100% local respectant l'intimite de l'utilisateur.
+1. **Pastille 1 : Anti-obsolescence, consommation raisonnée (allonger la durée de vie des appareils)**
+   * *Application concrète dans OpenSauce* : Remplacement de l'écran d'accueil alourdissant des constructeurs (Samsung OneUI, Xiaomi MIUI) par une interface fluide qui redonne une seconde jeunesse aux smartphones de 3 à 5 ans sans nécessiter l'achat d'un nouveau terminal.
+2. **Pastille 2 : Respect de la vie privée et souveraineté numérique (sans traçage)**
+   * *Application concrète dans OpenSauce* : Traitement 100% local des alertes via le service natif `NotificationListenerService`. Zéro SDK publicitaire, zéro télémétrie commerciale, aucune notification ni donnée d'usage n'est transmise sur des serveurs distants.
 
 ### Colonne 3 : Inclusif
 
-1. **Pastille 1 : Acces facilite aux equipements reconditionnes (appareils reconditionnes)**
-   - *Application concrete dans OSauce* : OSauce permet d'equiper des smartphones de seconde main a prix modeste (100 a 150 euros type Pixel ou Fairphone), rendant un telephone moderne accessible aux etudiants et menages a budget contraint.
-2. **Pastille 2 : Services fiables et adaptes aux appareils modestes / faibles debits**
-   - *Application concrete dans OSauce* : L'interface tourne sans latence sur des processeurs graphiques modestes et n'exige pas de connexion 5G permanente pour executer des services distants lourds.
+1. **Pastille 1 : Accès facilité aux équipements reconditionnés (appareils reconditionnés)**
+   * *Application concrète dans OpenSauce* : Partenariats avec des reconditionneurs solidaires pour proposer des packs clés en main abordables (120 à 150 €) prééquipés d'OpenSauce, offrant une alternative concrète et éthique aux smartphones neufs à 800 € pour les étudiants et foyers modestes.
+2. **Pastille 2 : Services fiables et adaptés aux appareils modestes / faibles débits**
+   * *Application concrète dans OpenSauce* : Fonctionne sans aucune latence sur des terminaux d'entrée de gamme ou anciens (dès Android 9). Ne dépend pas d'une connexion permanente en 5G pour afficher l'interface ou gérer les tâches quotidiennes.
 
-### Colonne 4 : Securise
+### Colonne 4 : Sécurisé
 
-1. **Pastille 1 : Reduction des failles et risques d'attaques (code optimise, audits)**
-   - *Application concrete dans OSauce* : Choix architectural de **Rust** garantissant la surete memoire (Memory Safety). Eradication mathematique des buffer overflows, use-after-free et fuites memoire qui representent 70% des failles critiques traditionnelles (recommandation explicite ANSSI et CISA).
-2. **Pastille 2 : Conformite reglementaire & RGPD, chiffrement**
-   - *Application concrete dans OSauce* : Conception *Privacy by Design*. Aucune donnee personnelle n'est capturee sans accord prealable, et les parametres locaux sont chiffres.
+1. **Pastille 1 : Réduction des failles et risques d'attaques (sécurité matérielle intacte)**
+   * *Application concrète dans OpenSauce* : Contrairement aux installations d'OS alternatifs qui obligent à déverrouiller le bootloader (brisant le chiffrement matériel sécurisé et les protections Knox / Titan M), OpenSauce s'installe comme un Launcher applicatif standard. **Le cloisonnement de sécurité (sandbox) et le chiffrement matériel natif d'Android restent intacts à 100%.**
+2. **Pastille 2 : Conformité réglementaire & RGPD, chiffrement**
+   * *Application concrète dans OpenSauce* : Conception stricte *Privacy by Design*. Aucune base de données d'utilisateurs nominative n'est créée, aucune autorisation réseau inutile n'est demandée pour le fonctionnement du launcher.
 
 ### Colonne 5 : Design responsable
 
-1. **Pastille 1 : Compatibilite avec anciens appareils, interfaces simples**
-   - *Application concrete dans OSauce* : Rendu graphique optimise via Slint (Femtovg/Wayland) directement accelere sur GPU, maintenant une cadence de 60 a 120 FPS meme sur du materiel ancien.
-2. **Pastille 2 : Anti-dark patterns, interfaces lisibles et sobres (zero surcharge)**
-   - *Application concrete dans OSauce* : Conception de l'interface "Respirer" : suppression des 80 notifications polluantes, des pastilles rouges anxiogenes et des flux de doomscrolling. Utilisation d'un fond noir OLED pur qui reduit la fatigue visuelle et preserve la batterie.
+1. **Pastille 1 : Compatibilité avec anciens appareils, interfaces simples**
+   * *Application concrète dans OpenSauce* : Rendu vectoriel moderne accéléré matériellement sur GPU, garantissant une fluidité de 60 à 120 FPS même sur des puces graphiques éprouvées.
+2. **Pastille 2 : Anti-dark patterns, interfaces lisibles et sobres (zéro surcharge cognitive)**
+   * *Application concrète dans OpenSauce* : Écran « Le Silence » sur fond noir OLED pur (`#000000`) qui éteint physiquement les sous-pixels de la dalle pour réduire la fatigue oculaire et la consommation de batterie. Éradication des pastilles rouges anxiogènes (triggers dopaminergiques) et remplacement du flux infini par un Hub d'Action structuré par sphères de vie.

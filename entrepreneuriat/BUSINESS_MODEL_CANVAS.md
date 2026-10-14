@@ -1,6 +1,6 @@
-# Business Model Canvas (BMC) - Projet OSauce
+# Business Model Canvas (BMC) - Projet OpenSauce (Aka O.Sauce)
 
-Ce document formalise l'integralite du Business Model Canvas d'OSauce selon le template officiel de l'ecole, structure en 9 blocs strategiques et relie a l'ODD 12 (Consommation et production responsables).
+Ce document formalise l'intégralité du Business Model Canvas d'OpenSauce selon le template officiel, structuré en 9 blocs stratégiques, aligné sur l'ODD 12 (Consommation et production responsables) et l'ODD 3 (Santé et bien-être).
 
 ---
 
@@ -8,33 +8,37 @@ Ce document formalise l'integralite du Business Model Canvas d'OSauce selon le t
 
 ```
 +----------------------------------------------------------------------------------------------------+
-| 1. PARTENAIRES CLES   | 2. ACTIVITES CLES     | 4. PROPOSITION DE VALEUR | 5. RELATION CLIENT  | 7. CIBLE (SEGMENTS)  |
+| 1. PARTENAIRES CLÉS   | 2. ACTIVITÉS CLÉS     | 4. PROPOSITION DE VALEUR | 5. RELATION CLIENT  | 7. CIBLE (SEGMENTS)  |
 |                       |                       |                          |                     |                      |
-| - Reconditionneurs    | - Developpement OS    | - OS mobile ultra-leger  | - Support Discord   | - Etudiants tech &   |
-|   (BackMarket, YesYes)|   (Rust & Slint UI)   |   (< 150 Mo RAM, 120 FPS)|   communautaire     |   Gen Z (18-25 ans)  |
-| - Constructeurs       | - WebUSB Installer    | - Anti-obsolescence      | - Centre d'aide     | - Passionnes FOSS    |
-|   ethiques (Fairphone)| - Integration sandbox |   (vie smartphone +3 ans)|   & FAQ sur le site |   & Linux mobile     |
-| - Communaute FOSS     |   Waydroid isolee     | - Zero bloatware, zero   | - Auto-assistance   | - Acheteurs de       |
-|   (postmarketOS)      | - API & BDD PostgreSQL|   tracage, zero pub      |   flashage WebUSB   |   reconditionne      |
-| - Hebergeurs souverains| - Audits memoire/secu| - Sandbox Waydroid pour  | - Co-conception     | - Utilisateurs saturés|
-|   (Scaleway, OVHcloud)| - Animation communaute|   apps vitales (banque)  |   beta-testeurs     |   par les ecrans     |
-|                       +-----------------------+ - WebUSB en 1 clic       +---------------------+ - Flottes pro /      |
-|                       | 3. RESSOURCES CLES    | - Economie de 82 kg de   | 6. CANAUX           |   collectivites      |
-|                       |                       |   matieres (ADEME)       |                     |                      |
-|                       | - Equipe dev Rust/OS  |                          | - Site osauce.io    |                      |
-|                       | - CI/CD GitHub Actions|   [ ODD 12 : Consommation| - WebUSB Flasher    |                      |
-|                       | - Dépôt SauceHub      |     responsable ]        | - Depots GitHub     |                      |
-|                       | - BDD PostgreSQL      |                          | - Reconditionneurs  |                      |
-|                       | - Communaute Discord  |                          | - Salons open source|                      |
-+-----------------------------------------------+--------------------------+---------------------+----------------------+
-| 8. STRUCTURE DE COUTS                                                    | 9. FLUX DE REVENUS                         |
+| - Reconditionneurs    | - Développement       | - Launcher Android sobre | - Entraide &        | - Étudiants & Gen Z  |
+|   solidaires (YesYes, |   Android natif       |   anti-dopamine (OLED,   |   support Discord   |   (18-25 ans) saturés|
+|   Emmaüs Connect,     |   (Kotlin & Compose)  |   zéro badge anxiogène)  |   communautaire     |   par les écrans     |
+|   BackMarket)         | - Gestion du service  | - Installation en 30s    | - Transparence FOSS | - Propriétaires de   |
+| - Magasins FOSS       |   de notifications    |   sans flasher ni risquer|   (GitHub issues,   |   smartphones de     |
+|   (F-Droid, IzzyDroid)|   (ListenerService)   |   de bricker l'appareil  |   discussions)      |   3-5 ans refusant   |
+| - Créateurs de mods   | - API légère catalogue| - Maintien 100% natif    | - Guide utilisateur |   de racheter neuf   |
+|   & widgets ouverts   |   de plugins/mods     |   des applis bancaires,  |   sobre en ligne    | - Passionnés de vie  |
+| - Associations de     | - Packaging F-Droid   |   SNCF et messageries    | - Co-conception avec|   privée et FOSS     |
+|   sobriété numérique  |   et releases APK     | - Tri des notifications  |   beta-testeurs     | - Acheteurs de       |
+|   (HOP, Framasoft,    | - Partenariats packs  |   par Groupes d'Action   +---------------------+   reconditionné clé  |
+|   Lève les yeux !)    |   reconditionné       + - Marketplace ouvert de  | 6. CANAUX           |   en main sans manip |
+| - Hébergeurs sobres   +-----------------------+   mods & shaders AGSL    |                     | - Écoles & flottes   |
+|   (Scaleway, Hetzner, | 3. RESSOURCES CLÉS    | - 100% Libre & Gratuit   | - Dépôt F-Droid     |   pro cherchant un   |
+|   OVHcloud)           |                       |   (Zéro freemium bloqué) | - Releases GitHub   |   mode focus         |
+|                       | - Équipe dev Android  | - Option verte clé en    |   et site web       |                      |
+|                       | - Dépôt GitHub FOSS   |   main (smartphone       | - Reconditionneurs  |                      |
+|                       | - CI/CD GitHub Actions|   reconditionné garanti  |   partenaires       |                      |
+|                       | - API catalogue mods  |   avec O.Sauce préinstall| - Salons éthiques   |                      |
+|                       | - Communauté Discord  |   [ ODD 12 & ODD 3 ]     |   & universités     |                      |
++-----------------------+-----------------------+--------------------------+---------------------+----------------------+
+| 8. STRUCTURE DE COÛTS                                                    | 9. FLUX DE REVENUS                         |
 |                                                                          |                                            |
-| - Hebergement serveurs d'images systeme, API et base de donnees          | - OSauce Core : 100% gratuit & open source |
-| - Bande passante reseau pour le telechargement des images d'installation | - SauceSync Cloud : 2 euros / mois         |
-| - Noms de domaine, certificats SSL et infrastructure technique           | - Marge sur smartphones reconditionnes     |
-| - Materiel de banc d'essai (smartphones de test Pixel, Fairphone)        |   preinstalles (40 a 60 euros / unite)     |
-| - Frais de salons et communication communautaire                         | - Offres Flottes B2B (support entreprise)  |
-| - Salaires et developpement de l'equipe a terme                          | - Mecenat open source (GitHub Sponsors)    |
+| - Hébergement sobre : site web, documentation & API catalogue mods       | - OpenSauce Launcher : 100% Gratuit & Libre|
+| - Noms de domaine et certificats de sécurité                             | - Dons libres & Mécénat communautaire      |
+| - Smartphone de test d'occasion pour validation matérielle               |   (GitHub Sponsors, Open Collective, dons) |
+| - Achat des smartphones reconditionnés partenaires (à la commande)       | - Marge éthique sur packs smartphones      |
+| - Frais postaux d'expédition des smartphones reconditionnés clés en main |   reconditionnés préinstallés (40 à 50 €)  |
+| - Frais de salons et supports de communication de sensibilisation        | - Soutiens institutionnels & fondations    |
 +--------------------------------------------------------------------------+--------------------------------------------+
 ```
 
@@ -43,64 +47,59 @@ Ce document formalise l'integralite du Business Model Canvas d'OSauce selon le t
 ## 2. Contenu Détaillé à Reporter par Case
 
 ### Case 1 : Partenaires Clés
-- **Reconditionneurs francais et europeens** : Ateliers de reconditionnement et plateformes de seconde main (BackMarket, YesYes, Recommerce) pour integrer l'OS sur leurs appareils.
-- **Constructeurs de materiels durables** : Fairphone, Pine64, Shiftphone pour optimiser la compatibilite directe sur smartphones reparables.
-- **Ecosysteme Linux Mobile & Open Source** : Equipes de postmarketOS (noyau/drivers), Slint UI (moteur graphique), Alpine Linux et Waydroid.
-- **Fournisseurs d'infrastructure souveraine** : Hebergeurs francais/europeens a faible empreinte carbone (Scaleway, OVHcloud, Hetzner) pour le stockage des images de build et l'API.
-- **Associations et communautes d'interet general** : HOP (Halte a l'Obsolescence Programmee), Framasoft et associations etudiantes pour relayer la sobriete numerique.
+- **Reconditionneurs solidaires et ateliers éthiques** : Ateliers français/européens (YesYes, Emmaüs Connect, Recommerce, BackMarket) pour proposer des packs smartphones reconditionnés avec OpenSauce déjà préconfiguré.
+- **Écosystème FOSS & Dépôts alternatifs** : F-Droid, IzzyOnDroid et la communauté Android open source pour la distribution vérifiée et sécurisée sans passer par des canaux fermés.
+- **Créateurs de mods et widgets** : Développeurs indépendants et designers créant des shaders AGSL et des passerelles utiles (minuteur Pomodoro, widget Obsidian, transports locaux).
+- **Associations d'intérêt général** : HOP (Halte à l'Obsolescence Programmée), Framasoft, Lève les yeux ! et associations étudiantes militant pour la déconnexion et le numérique responsable.
+- **Hébergeurs souverains à faible empreinte** : Scaleway, Hetzner ou OVHcloud pour héberger le site web et l'API légère du catalogue de mods.
 
 ### Case 2 : Activités Clés
-- **Conception du shell mobile** : Developpement de l'interface graphique en Slint (views, components, tokens) et du moteur systeme natif en Rust.
-- **Developpement du WebUSB Installer** : Maintenance de l'outil web permettant de flasher l'OS directement depuis le navigateur via l'API WebUSB / WebADB.
-- **Integration et isolation Waydroid** : Configuration de la sandbox conteneurisee pour executer les applications Android obligatoires (banque, transport) de facon etanche.
-- **Gestion de l'API & Registry SauceHub** : Developpement du backend securise et de la base PostgreSQL gerant les paquets audites et non intrusifs.
-- **Controle qualite et securite** : Verification d'absence de fuites memoire, tests unitaires (`cargo test`) et benchmarks d'autonomie batterie.
-- **Animation de la communaute** : Support utilisateur sur Discord, redaction de la documentation technique et traitement des tickets.
+- **Développement du Launcher Android natif** : Conception de l'interface graphique en Jetpack Compose et de la logique applicative en Kotlin moderne.
+- **Interception et gestion intelligente des alertes** : Développement et optimisation du `NotificationListenerService` pour filtrer les notifications et les rattacher aux Groupes d'Action sans impacter la batterie.
+- **Gestion du Store de mods communautaires** : Maintenance de l'API légère et du dépôt de manifests de plugins audités sans traceurs.
+- **Assurance qualité et performance** : Maintien d'un framerate constant à 60/120 FPS, vérification de l'absence de fuites mémoire et optimisation de la consommation de batterie.
+- **Préparation des packs reconditionnés** : Installation, vérification et expédition soignée des smartphones reconditionnés partenaires commandés clés en main.
+- **Animation de la communauté** : Support utilisateur sur Discord, gestion des contributions GitHub et documentation pédagogique.
 
 ### Case 3 : Ressources Clés
-- **Ressources humaines** : Equipe technique possedant l'expertise en Rust, Slint UI, developpement systeme Linux embarque et standards WebUSB.
-- **Infrastructure technique** : Pipeline d'integration continue GitHub Actions, conteneurisation Docker noVNC et serveurs de distribution d'images.
-- **Base de donnees relationnelle** : Instance PostgreSQL robuste garantissant la tracabilite cryptographique des applications et la gestion des comptes SauceSync.
-- **Parc materiel de validation** : Smartphones de reference (Google Pixel 3a/4a/6/7, Fairphone 4/5) servant de bancs d'essai pour les releases.
-- **Communaute de testeurs** : Base de 200 a 500 etudiants et developpeurs pilotes remontant les bugs et suggestions d'usage.
+- **Ressources humaines** : Compétences en ingénierie logicielle mobile Android (Kotlin, Jetpack Compose, APIs système Android).
+- **Ressources logicielles & techniques** : Dépôt de code open source GitHub, pipelines d'intégration continue CI/CD (GitHub Actions), documentation en ligne.
+- **Infrastructure serveur minimale** : API REST légère pour distribuer les manifests de mods et les métadonnées.
+- **Communauté active** : Groupe d'utilisateurs bêta-testeurs et contributeurs de mods.
 
-### Case 4 : Proposition de Valeur (Au Centre - ODD 12)
-- **Smartphone allie du calme mental** : Interface epuree sans mur d'applications, sans pastilles rouges et sans bannières anxiogenes (philosophie "Respirer").
-- **Performances et autonomie maximales** : Moins de 150 Mo de RAM consommes (au lieu de 3 Go sous Android), rendu fluide a 60/120 FPS sur GPU et autonomie batterie doublee.
-- **Anti-obsolescence reelle** : Redonne une seconde jeunesse a des smartphones de plus de 4 ans, prolongeant leur utilisation de 3 a 5 ans supplementaires.
-- **Zero concession sur le quotidien** : Waydroid permet d'ouvrir l'application bancaire 3D Secure ou le billet SNCF en conteneur isole sans subir l'ecosysteme publicitaire Android.
-- **Installation accessible a tous (WebUSB)** : Flashage en 1 clic via le cable USB dans Chrome ou Edge, sans aucune invite de commande complexe.
-- **Impact ecologique mesure (ADEME)** : Chaque terminal revalorise evite 87% de gaz a effet de serre et 82 kg de matieres premieres vierges.
-- **Souverainete et confidentialite** : Zero traceur, zero publicite imposee, donnees conservees 100% en local.
+### Case 4 : Proposition de Valeur
+- **Le sanctuaire anti-dopamine** : Un écran d'accueil noir OLED pur qui éteint les pixels, élimine les pastilles rouges anxiogènes et remplace l'obsession du scroll par un hub d'action structuré.
+- **Zéro barrière à l'entrée** : Installation en 30 secondes depuis un fichier APK ou F-Droid. Pas besoin de PC, pas de bootloader à débloquer, zéro risque de bricker son smartphone.
+- **Compatibilité 100% native** : Aucune régression. Toutes les applications vitales (banque 3D Secure, billets SNCF/Navigo, messageries professionnelles) fonctionnent immédiatement.
+- **Éthique et gratuité totale** : Pas de freemium castrateur. OpenSauce est 100% libre et gratuit pour tous, sans publicité et sans revente de données personnelles.
+- **Alternative verte clé en main** : Possibilité d'acquérir un smartphone reconditionné garanti avec OpenSauce déjà installé pour ceux qui veulent un appareil prêt à l'emploi sans effort technique.
 
 ### Case 5 : Relation Client
-- **Assistance directe et entraide** : Serveur Discord officiel structure par canaux thematiques (`#aide-installation`, `#retours-ui`, `#developpement-rust`).
-- **Documentation et auto-formation** : Guides pas-a-pas illustres, FAQ complete et depannage autonome sur le portail web.
-- **Transparence et confiance** : Code source integralement auditable sur GitHub et tableau Kanban public des fonctionnalites en cours.
-- **Accompagnement dedie B2B** : Support personnalise pour les etablissements pilotes et reconditionneurs partenaires.
+- **Transparence et confiance open source** : Roadmap publique, code entièrement auditable sur GitHub, discussions ouvertes.
+- **Support communautaire réactif** : Entraide sur Discord et FAQ en ligne axée sur la simplicité.
+- **Accompagnement bienveillant** : Guides d'hygiène numérique pour aider les utilisateurs à retrouver un usage apaisé de leur téléphone.
 
-### Case 6 : Canaux
-- **Site web officiel `osauce.io`** : Vitrine de presentation, simulateur WebAssembly interactif pour tester l'interface en ligne et WebUSB Flasher.
-- **Depots de code GitHub** : Distribution open source, releases binaires signees cryptographiquement et documentation Markdown.
-- **Boutiques en ligne des reconditionneurs** : Vente directe de terminaux d'occasion avec OSauce preinstalle comme argument commercial differentiant.
-- **Salons et evenements specialises** : Rencontres open source (FOSDEM, Capitole du Libre), forums etudiants et ateliers de demontage/reparation (Repair Cafes).
+### Case 6 : Canaux de Distribution
+- **Distribution directe mobile** : F-Droid, IzzyOnDroid, téléchargement direct de l'APK sur le site officiel et GitHub Releases.
+- **Boutique en ligne solidaire** : Commande des smartphones reconditionnés préinstallés directement sur le site web.
+- **Prescription militante** : Salons du libre, interventions universitaires, relais par les associations écologiques et de santé mentale.
 
-### Case 7 : Cible (Segments Clients)
-- **Etudiants et jeunes adultes (18-25 ans / Gen Z - Persona Marc)** : Utilisateurs intensifs cherchant a sortir de la dependance attentionnelle et du doomscrolling sans renoncer a leurs outils vitaux.
-- **Developpeurs et partisans du logiciel libre (FOSS)** : Utilisateurs exigeant un systeme verifiable, sans pistage opaque et performant.
-- **Consommateurs a budget contraint** : Particuliers refusant de depenser 800 a 1 200 euros dans un smartphone neuf et privilegiant la seconde main.
-- **Ecoles et flottes professionnelles de terrain** : Entreprises et collectivites necessitant des smartphones fiables, sans distraction et securises pour leurs collaborateurs.
+### Case 7 : Segments Clients (Cible)
+- **Étudiants et Gen Z (18-25 ans)** : Conscients de leur surconsommation d'écrans, en recherche d'une « diète dopaminergique » sans renoncer à leur vie sociale et universitaire.
+- **Utilisateurs de smartphones vieillissants** : Propriétaires d'appareils de 3 à 5 ans qui rament sous les surcouches constructeurs et refusent de racheter un téléphone neuf à 800 €.
+- **Passionnés du logiciel libre et de la vie privée** : Utilisateurs recherchant un environnement sain et auditable sans télémétrie commerciale.
+- **Acheteurs de reconditionné sans compétence technique** : Personnes souhaitant un téléphone durable déjà configuré de manière sobre sans devoir installer d'application eux-mêmes.
+- **Écoles et organisations** : Établissements souhaitant sensibiliser ou équiper des flottes mobiles d'un mode épuré sans distractions.
 
 ### Case 8 : Structure de Coûts
-- **Infrastructure cloud** : Hebergement de l'API, base de donnees PostgreSQL et bande passante pour le telechargement des images systeme OSauce.
-- **Services web & securite** : Noms de domaine, serveurs DNS, certificats SSL/TLS et sauvegardes automatisees.
-- **Banc d'essai et materiel de test** : Achat de smartphones de seconde main compatibles pour valider chaque nouvelle version du firmware.
-- **Communication et visibilite** : Participation aux salons specialises, supports pedagogiques et ateliers de demonstration.
-- **Frais d'equipe a terme** : Salaires et prestations des developpeurs et mainteneurs du projet.
+- **Hébergement et réseau légers** : Serveur web, documentation et API de mods (15 à 30 € / mois).
+- **Noms de domaine et sécurité** : ~30 € / an.
+- **Matériel de test** : 1 ou 2 smartphones Android d'occasion pour valider la compatibilité des versions Android (Android 9 à 15).
+- **Achat des téléphones reconditionnés** : Achetés auprès du reconditionneur partenaire au moment où un utilisateur passe commande (flux tendu, zéro stock dormant).
+- **Frais d'emballage et d'expédition** : Colissimo vert pour les commandes matérielles (~5 € / envoi).
 
 ### Case 9 : Flux de Revenus
-- **OSauce Core (Open Source)** : 100% gratuit en telechargement libre pour les particuliers et contributeurs autonomes.
-- **SauceSync Cloud (Abonnement Freemium - 2 €/mois)** : Synchronisation automatique et chiffree de bout en bout des reglages, notes et contacts sur serveurs souverains francais.
-- **Partenariat reconditionneurs (Marge materielle)** : Marge brute de 40 a 60 euros sur chaque smartphone reconditionne vendu clef-en-main avec OSauce preinstalle.
-- **Offres Entreprises & Flottes B2B** : Prestations de support technique dedie, personnalisation de l'OS et configuration de flottes closes.
-- **Mecenat et dons communautaires** : Financement via Open Collective et GitHub Sponsors pour soutenir la recherche et developpement.
+- **OpenSauce Core** : 100% Gratuit et Open Source (aucun abonnement obligatoire, aucun freemium).
+- **Dons libres et mécénat communautaire** : Campagnes GitHub Sponsors, Open Collective et dons libres d'utilisateurs reconnaissants de retrouver leur tranquillité d'esprit (~20 à 50 € / mois au lancement).
+- **Marge éthique sur packs reconditionnés préinstallés** : Marge de 40 à 50 € par téléphone pour le travail d'installation, de contrôle qualité et de garantie logicielle.
+- **Subventions et mécénat d'intérêt général** : Appels à projets écoconception numérique (ADEME, fondations pour l'open source).

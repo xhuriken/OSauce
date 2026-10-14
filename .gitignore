@@ -64,6 +64,14 @@ pkg/
 # ------------------------------------------------------------------------------
 .vscode/
 .idea/
+*.iml
+*.iws
+*.ipr
+.navigation/
+captures/
+.cxx/
+*.hprof
+.externalNativeBuild/
 *.swp
 *.swo
 *~
@@ -81,6 +89,11 @@ Thumbs.db
 .gradle/
 build/
 **/build/
+app/build/
 *.apk
 *.aab
+*.ap_
+*.dex
+output.json
 local.properties
+

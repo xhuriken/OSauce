@@ -1,181 +1,72 @@
 package com.osauce.launcher
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
+import android.provider.MediaStore
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
-import com.osauce.launcher.data.model.ActionGroup
-import com.osauce.launcher.data.model.ActionNotification
-import com.osauce.launcher.data.model.ActionTodo
-import com.osauce.launcher.plugin.PluginManager
-import com.osauce.launcher.ui.screens.*
+import com.osauce.launcher.ui.screens.SilenceScreen
 import com.osauce.launcher.ui.theme.OSauceTheme
 
+/**
+ * MainActivity is the front door of our Android application.
+ *
+ * In Android:
+ * - An "Activity" represents a single focused screen/window that the user interacts with.
+ * - In AndroidManifest.xml, this Activity is registered with the category "HOME",
+ *   which tells Android: "Hey, I can act as the main home screen (launcher) of this phone."
+ */
 class MainActivity : ComponentActivity() {
 
-    private val pluginManager = PluginManager()
-
+    /**
+     * onCreate() is the very first method Android calls when launching our Activity.
+     * Think of it like the constructor or 'DOMContentLoaded' in web development.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // setContent { } is where Jetpack Compose takes over the Android window.
+        // Instead of old XML files, everything inside this block is modern Kotlin UI.
         setContent {
+            // Apply our OLED theme (colors, fonts) across the entire app
             OSauceTheme {
-                var currentScreen by remember { mutableStateOf(0) } // 0=Silence, 1=Hub, 2=Detail, 3=Tools, 4=Marketplace
-                var selectedGroup by remember { mutableStateOf<ActionGroup?>(null) }
-
-                val plugins by pluginManager.marketplacePlugins.collectAsState()
-
-                var groupsState by remember {
-                    mutableStateOf(
-                        listOf(
-                            ActionGroup(
-                                id = "humain",
-                                title = "Humain & Proches",
-                                statusText = "2 nouveaux messages",
-                                notifications = listOf(
-                                    ActionNotification("1", "Maman", "Tu passes ce soir ?", "11:42", "com.google.android.apps.messaging")
-                                ),
-                                todos = listOf(
-                                    ActionTodo("t1", "Rappeler Lucas avant 20h", false)
-                                ),
-                                appShortcuts = listOf("TEL", "SMS", "SIGNAL", "CONTACTS")
-                            ),
-                            ActionGroup(
-                                id = "travail",
-                                title = "Travail & Etudes",
-                                statusText = "En veille jusqu'a 08:00",
-                                notifications = listOf(
-                                    ActionNotification("2", "M. Dupont", "Verifier section 2 du rapport", "09:15", "ch.protonmail.android")
-                                ),
-                                todos = listOf(
-                                    ActionTodo("t2", "Relire bibliographie", true),
-                                    ActionTodo("t3", "Deposer le rapport final avant 17h00", false, "com.android.documentsui", "Ouvrir Fichiers")
-                                ),
-                                appShortcuts = listOf("MAIL", "AGENDA", "NOTES", "FICHIERS"),
-                                isMuted = true
-                            ),
-                            ActionGroup(
-                                id = "quotidien",
-                                title = "Quotidien & Vital",
-                                statusText = "1 alerte traitee",
-                                notifications = listOf(
-                                    ActionNotification("3", "SNCF Connect", "Billet TGV 8421 confirme", "Hier", "com.sncf.fusion")
-                                ),
-                                todos = listOf(
-                                    ActionTodo("t4", "Composter billet avant depart", false, "com.sncf.fusion", "Billet")
-                                ),
-                                appShortcuts = listOf("BANQUE", "SNCF", "PLANS", "HORLOGE")
-                            ),
-                            ActionGroup(
-                                id = "loisirs",
-                                title = "Temps Libre & Calme",
-                                statusText = "Silence total",
-                                notifications = emptyList(),
-                                todos = listOf(
-                                    ActionTodo("t5", "Ecouter podcast tech", false)
-                                ),
-                                appShortcuts = listOf("MUSIQUE", "PODCAST", "LIVRE", "RADIO"),
-                                isMuted = true
-                            )
-                        )
-                    )
-                }
-
-                when (currentScreen) {
-                    0 -> SilenceScreen(
-                        onOpenHub = { currentScreen = 1 },
-                        onOpenTools = { currentScreen = 3 },
-                        onOpenMarketplace = { currentScreen = 4 },
-                        onEmergencyCall = {
-                            val intent = Intent(Intent.ACTION_DIAL)
-                            startActivity(intent)
-                        },
-                        onCamera = {
-                            val intent = Intent("android.media.action.IMAGE_CAPTURE")
-                            startActivity(intent)
-                        }
-                    )
-                    1 -> HubScreen(
-                        groups = groupsState,
-                        onSelectGroup = { group ->
-                            selectedGroup = group
-                            currentScreen = 2
-                        },
-                        onBackToSilence = { currentScreen = 0 },
-                        onOpenMarketplace = { currentScreen = 4 },
-                        onOpenTools = { currentScreen = 3 }
-                    )
-                    2 -> selectedGroup?.let { group ->
-                        GroupDetailScreen(
-                            group = group,
-                            onBack = { currentScreen = 1 },
-                            onConvertToTodo = { notif ->
-                                val newTodo = ActionTodo(
-                                    id = System.currentTimeMillis().toString(),
-                                    text = "${notif.sender}: ${notif.message}",
-                                    isDone = false,
-                                    linkedPackageName = notif.packageName,
-                                    actionLabel = "Repondre"
-                                )
-                                groupsState = groupsState.map { g ->
-                                    if (g.id == group.id) {
-                                        g.copy(
-                                            notifications = g.notifications.filter { it.id != notif.id },
-                                            todos = g.todos + newTodo
-                                        )
-                                    } else g
-                                }
-                                selectedGroup = groupsState.find { it.id == group.id }
-                                Toast.makeText(this, "Alerte transformee en Todo", Toast.LENGTH_SHORT).show()
-                            },
-                            onToggleTodo = { todo ->
-                                groupsState = groupsState.map { g ->
-                                    if (g.id == group.id) {
-                                        g.copy(
-                                            todos = g.todos.map {
-                                                if (it.id == todo.id) it.copy(isDone = !it.isDone) else it
-                                            }
-                                        )
-                                    } else g
-                                }
-                                selectedGroup = groupsState.find { it.id == group.id }
-                            },
-                            onLaunchApp = { pkg ->
-                                launchAppPackage(pkg)
-                            },
-                            onCloseAndClear = {
-                                currentScreen = 1
-                                Toast.makeText(this, "Groupe range et archive", Toast.LENGTH_SHORT).show()
-                            }
-                        )
+                // Display Screen 1: The Silence
+                SilenceScreen(
+                    onDialer = {
+                        // ACTION_DIAL tells Android: "Open whichever phone app the user has to dial a number"
+                        val dialerIntent = Intent(Intent.ACTION_DIAL)
+                        startActivitySafe(dialerIntent)
+                    },
+                    onCamera = {
+                        // ACTION_STILL_IMAGE_CAMERA tells Android: "Open the default camera app"
+                        val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                        startActivitySafe(cameraIntent)
+                    },
+                    onOpenDefaultHomeSettings = {
+                        // ACTION_HOME_SETTINGS opens Android's system menu where the user can pick
+                        // which app is their default launcher (allows them to easily switch back if needed).
+                        val homeSettingsIntent = Intent(Settings.ACTION_HOME_SETTINGS)
+                        startActivitySafe(homeSettingsIntent)
                     }
-                    3 -> ToolsScreen(
-                        onBack = { currentScreen = 0 },
-                        onLaunchApp = { pkg ->
-                            launchAppPackage(pkg)
-                        }
-                    )
-                    4 -> MarketplaceScreen(
-                        plugins = plugins,
-                        onToggleInstall = { pluginId ->
-                            pluginManager.toggleInstallPlugin(pluginId)
-                        },
-                        onBack = { currentScreen = 0 }
-                    )
-                }
+                )
             }
         }
     }
 
-    private fun launchAppPackage(packageName: String) {
-        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
-        if (launchIntent != null) {
-            startActivity(launchIntent)
-        } else {
-            Toast.makeText(this, "Application non installee ($packageName)", Toast.LENGTH_SHORT).show()
+    /**
+     * Helper function to launch external applications safely.
+     *
+     * Why is this needed?
+     * If an emulator or weird budget tablet does not have a camera or phone dialer installed,
+     * calling startActivity() directly would throw an ActivityNotFoundException and crash the app.
+     * The try-catch block makes sure our launcher never crashes.
+     */
+    private fun startActivitySafe(intent: Intent) {
+        try {
+            startActivity(intent)
+        } catch (_: Exception) {
+            // Silently ignore if no app exists to handle this action
         }
     }
 }
