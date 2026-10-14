@@ -132,3 +132,7 @@ L'APK généré sera disponible dans :
 
 OpenSauce est un logiciel libre distribué sous licence open source.  
 Les contributions, retours d'expérience et créations de mods sont les bienvenus via les [Issues GitHub](https://github.com/xhuriken/OSauce/issues) et les discussions communautaires.
+
+
+
+Miam Open Sauce
