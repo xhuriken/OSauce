@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OpenSauce</string>
+
+    <!-- Home Screen -->
+    <string name="section_essentials">ESSENTIELS</string>
+    <string name="action_change_launcher">CHANGER DE LAUNCHER PAR DÉFAUT</string>
+    <string name="battery_status_format">%1$d%%</string>
+
+    <!-- Digest & Calm Status -->
+    <string name="default_calm_message">Personnalisez-moi !</string>
+    <string name="digest_held">%1$d notifs retenues dans le digest</string>
+
+    <!-- Action Icons Content Descriptions -->
+    <string name="cd_phone">Téléphone</string>
+    <string name="cd_messages">Messages</string>
+    <string name="cd_camera">Appareil photo</string>
+    <string name="cd_apps">Toutes les applications</string>
+    <string name="cd_settings">Paramètres</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_launcher_title">Launcher par défaut</string>
+    <string name="settings_launcher_desc">Définir OpenSauce comme écran d\'accueil principal</string>
+    <string name="settings_display_title">Affichage &amp; Fluidité</string>
+    <string name="settings_seconds_title">Afficher les secondes</string>
+    <string name="settings_seconds_desc">Appuyez sur l\'horloge à tout moment pour basculer</string>
+    <string name="settings_calm_text_title">Message de calme</string>
+    <string name="settings_calm_text_desc">Texte affiché quand tout est calme et sans alerte</string>
+    <string name="settings_calm_text_hint">Entrez votre message de calme…</string>
+
+    <!-- Interactive Background (The Sauce) Settings -->
+    <string name="settings_bg_title">Arrière-plan interactif</string>
+    <string name="settings_bg_vibrancy_title">Vibrance de la matrice</string>
+    <string name="settings_bg_vibrancy_desc">Intensité lumineuse de base de la grille fluide</string>
+    <string name="settings_bg_shape_title">Motif cellulaire</string>
+    <string name="settings_bg_shape_desc">Forme géométrique des cellules réactives</string>
+    <string name="settings_bg_touch_title">Réaction tactile</string>
+    <string name="settings_bg_touch_desc">Ondes fluides et gerbes de particules au toucher</string>
+    <string name="settings_bg_drag_title">Traînée fluide au glisser</string>
+    <string name="settings_bg_drag_desc">Dessine une traînée lumineuse de particules en glissant le doigt</string>
+
+    <string name="vibrancy_calm">Subtile</string>
+    <string name="vibrancy_balanced">Équilibrée</string>
+    <string name="vibrancy_vibrant">Éclatante</string>
+
+    <string name="shape_squares">Carrés</string>
+    <string name="shape_cells">Cellules</string>
+    <string name="shape_cross">Croix Matrice</string>
+
+    <string name="settings_theme_title">Thèmes &amp; Modding</string>
+    <string name="settings_theme_desc">Changer la palette ou charger un theme.json</string>
+
+    <string name="settings_bg_density_title">Densité des cellules</string>
+    <string name="settings_bg_density_desc">Nombre de cellules et finesse de la matrice</string>
+    <string name="density_coarse">Grandes</string>
+    <string name="density_normal">Normale</string>
+    <string name="density_dense">Dense</string>
+    <string name="density_micro">Micro</string>
+
+    <!-- App Drawer -->
+    <string name="drawer_title">Toutes les applications</string>
+    <string name="drawer_search_hint">Rechercher une application…</string>
+    <string name="drawer_empty">Aucune application trouvée</string>
+
+    <string name="settings_about_title">OpenSauce v1.0.0</string>
+    <string name="settings_about_desc">Launcher fluide sobre &amp; intentionnel</string>
+    <string name="action_close">Fermer</string>
+    <string name="action_save">Enregistrer</string>
+</resources>

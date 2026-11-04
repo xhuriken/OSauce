@@ -1,4 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">OpenSauce</string>
+
+    <!-- Home Screen -->
+    <string name="section_essentials">ESSENTIALS</string>
+    <string name="action_change_launcher">CHANGE DEFAULT LAUNCHER</string>
+    <string name="battery_status_format">%1$d%%</string>
+
+    <!-- Digest & Calm Status -->
+    <string name="default_calm_message">Customize me !</string>
+    <string name="digest_held">%1$d notifs held in digest</string>
+
+    <!-- Action Icons Content Descriptions -->
+    <string name="cd_phone">Phone</string>
+    <string name="cd_messages">Messages</string>
+    <string name="cd_camera">Camera</string>
+    <string name="cd_apps">All Applications</string>
+    <string name="cd_settings">Settings</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_launcher_title">Default Launcher</string>
+    <string name="settings_launcher_desc">Choose OpenSauce as default home screen</string>
+    <string name="settings_display_title">Display &amp; Fluidity</string>
+    <string name="settings_seconds_title">Display seconds</string>
+    <string name="settings_seconds_desc">Tap the clock anytime on home screen to toggle</string>
+    <string name="settings_calm_text_title">Calm Status Message</string>
+    <string name="settings_calm_text_desc">Text displayed when zero alerts are pending</string>
+    <string name="settings_calm_text_hint">Enter your calm motto…</string>
+
+    <!-- Interactive Background (The Sauce) Settings -->
+    <string name="settings_bg_title">Interactive Background</string>
+    <string name="settings_bg_vibrancy_title">Matrix Vibrancy</string>
+    <string name="settings_bg_vibrancy_desc">Base illumination of the fluid pixel grid</string>
+    <string name="settings_bg_shape_title">Cellular Pattern</string>
+    <string name="settings_bg_shape_desc">Geometry of reactive matrix cells</string>
+    <string name="settings_bg_touch_title">Touch Reaction Sparks</string>
+    <string name="settings_bg_touch_desc">Spawns fluid bursts and turbulent waves on tap</string>
+    <string name="settings_bg_drag_title">Drag Drawing Trail</string>
+    <string name="settings_bg_drag_desc">Paints glowing fluid trails when gliding across the screen</string>
+
+    <string name="vibrancy_calm">Subtle</string>
+    <string name="vibrancy_balanced">Balanced</string>
+    <string name="vibrancy_vibrant">Vibrant</string>
+
+    <string name="shape_squares">Squares</string>
+    <string name="shape_cells">Organic Cells</string>
+    <string name="shape_cross">Cross Matrix</string>
+
+    <string name="settings_theme_title">Themes &amp; Modding</string>
+    <string name="settings_theme_desc">Switch palette or load community theme.json</string>
+
+    <string name="settings_bg_density_title">Cell Grid Density</string>
+    <string name="settings_bg_density_desc">Number of cells and matrix resolution</string>
+    <string name="density_coarse">Large</string>
+    <string name="density_normal">Normal</string>
+    <string name="density_dense">Dense</string>
+    <string name="density_micro">Micro</string>
+
+    <!-- App Drawer -->
+    <string name="drawer_title">All Applications</string>
+    <string name="drawer_search_hint">Search apps…</string>
+    <string name="drawer_empty">No applications found</string>
+
+    <string name="settings_about_title">OpenSauce v1.0.0</string>
+    <string name="settings_about_desc">Calm &amp; intentional fluid launcher</string>
+    <string name="action_close">Close</string>
+    <string name="action_save">Save</string>
 </resources>
