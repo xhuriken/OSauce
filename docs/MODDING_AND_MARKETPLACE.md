@@ -1,91 +1,155 @@
-# Modding Communautaire & Marketplace de Plugins - OSauce
+# Modding Communautaire, Écosystème & Marketplace de Plugins — OpenSauce (O.Sauce)
 
-Ce document formalise l'axe strategique du **Modding Communautaire** pour OSauce Launcher. Il definit comment les developpeurs tiers creent, partagent et installent des extensions ouvertes via la plateforme `osauce.io` et la page Marketplace integree dans l'application.
-
----
-
-## 1. Vision du Modding : La Personnalisation Ethique
-
-Sur les launchers Android classiques ou iOS :
-* L'utilisateur est contraint par des fonctions figees ou des packs d'icones payants et fermes.
-* Les widgets tiers sont souvent des gouffres a batterie, bourres de publicite ou de traceurs analytiques.
-
-Dans OSauce :
-* **Un SDK ouvert et sobre** : N'importe quel developpeur ou etudiant peut concevoir une extension en quelques heures via notre API Kotlin / Compose.
-* **Le Marketplace Integre** : Accessible directement depuis l'Ecran 4 du launcher, il permet de decouvrir et d'installer des mods en un clic.
-* **Label Verifie FOSS** : Toutes les extensions sont certifiees 100% open source, sans publicite, sans appel reseau masque et sans gaspillage de batterie.
+Ce document constitue la spécification officielle de référence pour l'architecture de **Modding**, de l'**Écosystème Cloud/Web** et du **Marketplace OpenSauce**. Il formalise le fonctionnement complet : du créateur concevant son add-on à l'utilisateur final installant un mod en un clic depuis l'application ou le site web.
 
 ---
 
-## 2. Les 4 Categories de Mods Supportees
+## 1. Vision : Le Modding Éthique, Souverain et "Plug & Play"
 
-### 1. Shaders & Rendu Graphique (AGSL)
-* *Description* : Shaders visuels utilisant le langage AGSL d'Android pour enrichir l'Ecran 1 (Silence) ou les transitions de groupes.
-* *Exemples* :
-  * **Cadran Solaire 24H** : Animation subtile de la course solaire autour de l'horloge hero.
-  * **Respiration Visuelle** : Pulsation organique imperceptible calquee sur un rythme de 6 respirations par minute (coherence cardiaque).
+Sur les systèmes mobiles conventionnels (surcouches Android lourdes ou iOS) :
+* L'utilisateur subit un environnement fermé, des widgets prédateurs d'énergie et des trackers publicitaires.
+* La personnalisation se résume à des packs d'icônes payants ou des surcouches instables.
 
-### 2. Outils & Passerelles de Productivite
-* *Description* : Extensions connectant les Groupes d'Action a des logiciels tiers souverains.
-* *Exemples* :
-  * **Passerelle Obsidian / Logseq** : Ecrit et synchronise les Todos coches directement dans un coffre Markdown local.
-  * **Chrono Focus Pomodoro** : Minuteur calme affichant le temps restant sur l'Intention unique de l'Ecran 1.
-
-### 3. Mini-Widgets & Controles Sobres
-* *Description* : Cartes de controle compactes pour piloter un usage sans ouvrir l'application parente.
-* *Exemples* :
-  * **Lecteur Audio Minimal** : Boutons texte Play/Pause/Next pour VLC ou Spotify.
-  * **Suivi Velo / Transports** : Affichage d'une station Velib ou horaire de bus favori en temps reel.
-
-### 4. Packs de Groupes d'Action Pre-configures
-* *Description* : Templates de groupes adaptes a des profils particuliers (Medical, Developpeur, Artiste, Parent).
-* *Exemples* :
-  * Pack « Etudiant Prep » : Groupes automatiquement parametres pour bloquer les distractions pendant les horaires d'etude.
+Dans **OpenSauce** :
+* **Accessibilité Totale (No-Code à Pro)** : Créer un mod doit être aussi simple que modifier un fichier JSON ou coller un shader, sans obliger à maîtriser le code source interne du launcher.
+* **100% Éco-conçu & Sandboxé** : Chaque mod tourne dans un bac à sable strict. Zéro fuite de données, interdiction des boucles CPU énergivores, certification de sobriété thermique et batterie.
+* **Expérience Unifiée Web & In-App** : Un compte unique OpenSauce (optionnel, respectueux de la vie privée) permet de retrouver ses mods et réglages favoris partout.
 
 ---
 
-## 3. Structure d'un Plugin OSauce (`manifest.json`)
+## 2. Les 3 Niveaux de Modding ("Plug & Play")
 
-Chaque mod partage sur `osauce.io` comporte un fichier descriptif standardise :
+Pour ouvrir la création au plus grand nombre (graphistes, étudiants, développeurs confirmés) :
 
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ NIVEAU 1 : Thèmes & Palettes Déclaratifs (100% No-Code / JSON)         │
+│ -> Édition d'un fichier theme.json, palettes OLED, polices, rayon     │
+├────────────────────────────────────────────────────────────────────────┤
+│ NIVEAU 2 : Shaders Visuels & Motifs Dynamiques (AGSL / Canvas)         │
+│ -> Shaders graphiques natifs Android 13+ compilés à chaud à 120 FPS    │
+├────────────────────────────────────────────────────────────────────────┤
+│ NIVEAU 3 : Tuiles & Add-ons Intelligents (Kotlin Compose Plugin API)   │
+│ -> Tuiles fonctionnelles, passerelles (Obsidian, Todoist, météo sobre) │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### Niveau 1 — Thèmes & Palettes Déclaratifs (`theme.json`)
+Accessible à tous sans coder. Définition déclarative d'une identité visuelle :
 ```json
 {
-  "id": "org.osauce.pomodoro",
-  "name": "Chrono Focus Pomodoro",
-  "version": "1.0.2",
-  "author": "alex_dev",
+  "id": "osauce-monochrome-amber",
+  "name": "Ambre OLED Minimal",
+  "version": "1.0.0",
+  "author": "Céleste",
   "license": "MIT",
-  "category": "PRODUCTIVITE",
-  "description": "Minuteur de concentration sobre sans alarme stridente, integre a l'Ecran 1.",
-  "target_screen": "SILENCE_HERO",
-  "permissions": ["LOCAL_STORAGE"],
-  "repo_url": "https://github.com/alex_dev/osauce-pomodoro"
+  "type": "THEME",
+  "colors": {
+    "background": "#000000",
+    "surface": "#101010",
+    "accent": "#FFB300",
+    "textPrimary": "#FAFAFA",
+    "textSecondary": "#808080"
+  },
+  "typography": {
+    "clockFont": "syne_bold",
+    "bodyFont": "space_grotesk"
+  },
+  "matrix": {
+    "shape": "ROUNDED_SQUARE",
+    "vibrancy": "CALM",
+    "particlesEnabled": true
+  }
 }
 ```
 
+### Niveau 2 — Shaders Graphiques & Fonds Réactifs (AGSL)
+Pour les créateurs d'effets visuels et motion designers.
+* Fichier `shader.agsl` interprété nativement par le moteur `FluidBackground` via `RuntimeShader` (Android 13+).
+* Calibré pour un rendu fluide à 120 Hz avec delta-time indépendant et consommation batterie ultra-basse.
+* *Exemples* : Ondes harmoniques, automates cellulaires (Game of Life interactif), gradients organiques lents, brume de calme.
+
+### Niveau 3 — Tuiles & Add-ons Fonctionnels (Kotlin Compose API)
+Pour les développeurs souhaitant enrichir l'Action Hub ou l'Écran Silence :
+```kotlin
+interface OSauceTilePlugin {
+    val id: String
+    val displayName: String
+    val author: String
+    val targetSphere: LifeSphere // HUMAIN, TRAVAIL, VITAL, TEMPS_LIBRE
+    
+    @Composable
+    fun Content(context: PluginContext)
+}
+```
+* **Sécurité & Permissions** : Bac à sable limitant les accès système. Déclaration explicite des permissions requises (`LOCAL_STORAGE`, `READ_CALENDAR_SOBRE`, etc.).
+
 ---
 
-## 4. Parcours Utilisateur & Developpeur
+## 3. Architecture de l'Écosystème (Web ↔ Cloud ↔ App)
 
 ```
-[ DEVELOPPEUR ]                                         [ UTILISATEUR ]
-       |                                                       |
-Code son mod en Kotlin                                   Ouvre OSauce Launcher
-       |                                                       |
-Publie sur osauce.io/developers                         Clique sur "Marketplace"
-       |                                                       |
-Audit automatique de securite                            Consulte les mods verifies
-(Zero pub, zero fuite de data)                                 |
-       |                                                       |
-Apparaît dans le Marketplace  ----------------------->   Clique sur "Installer" en 1 clic
-                                                               |
-                                                         Le mod s'active immediatement
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Site Web OpenSauce (osauce.io)                  │
+│  - Création / Connexion de compte (GitHub, Google, Email Magic Link)   │
+│  - Hub des créateurs : documentation de l'API, soumission de mods      │
+│  - Galerie / Marketplace Web avec prévisualisation en direct           │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ REST / GraphQL API
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Backend Cloud OpenSauce                         │
+│  - Service d'Authentification & Gestion des profils                    │
+│  - Registry des plugins (métadonnées, versions, stats de téléchargement)│
+│  - CDN de distribution des packages (.osmod, .json, .agsl)             │
+│  - Pipeline d'analyse statique de sécurité & éco-index                 │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Synchronisation & Téléchargement
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                      Application Mobile OSauce                         │
+│  - Module Auth / Compte (Gestion du profil in-app ou mode invité)      │
+│  - Store In-App (Navigation, recherche par catégorie, filtres)         │
+│  - PluginManager & ThemeEngine (Chargement à chaud, activation 1-clic) │
+└────────────────────────────────────────────────────────────────────────┘
 ```
+
+### 1. Le Compte Utilisateur OpenSauce
+* **Dualité Web & In-App** : L'utilisateur peut créer son compte indifféremment sur le site web ou directement au sein de l'application mobile.
+* **Respect du Libre & Mode Invité** : Aucun compte n'est obligatoire pour utiliser le launcher ou les mods préinstallés. Le compte sert à synchroniser ses mods favoris, noter les extensions et publier ses propres créations.
+* **Export / Backup Souverain** : Sauvegarde JSON exportable localement à tout moment (zéro verrouillage propriétaire).
+
+### 2. Le Store de Mods Intégré (In-App)
+* Interface sobre et sans bannières publicitaires intégrée aux paramètres d'OpenSauce.
+* **Sections** :
+  - *Essentiels vérifiés* (mods par défaut pré-inclus).
+  - *Thèmes & Palettes*.
+  - *Fonds vivants & Shaders*.
+  - *Tuiles & Intégrations*.
+* **Installation 1-Click** : Téléchargement du package, vérification d'intégrité SHA256, activation à chaud sans relancer l'application.
 
 ---
 
-## 5. Modele Economique du Marketplace
+## 4. Outils Développeur & Accessibilité Plug & Play
 
-1. **Gratuite totale du catalogue de base** : Les outils d'utilite publique restent 100% libres et gratuits.
-2. **Pourboires et Mecenat direct aux createurs (Donationware)** : Possibilite pour les utilisateurs de remunerer directement un developpeur tiers sans commission predatrice.
-3. **Mise en avant et Certification institutionnelle** : Option pour des ecoles ou tiers de commander des packs d'entreprises certifies.
+Pour encourager une communauté vibrante, nous mettons à disposition :
+1. **CLI `create-osauce-mod`** : Générateur de templates de mods (Thème, Shader ou Add-on Kotlin) en une seule commande terminal.
+2. **Simulateur Web de Thèmes** : Interface web interactive sur `osauce.io/studio` pour concevoir et tester visuellement son `theme.json` avant export.
+3. **Documentation Vivante** : Exemples documentés, guides d'optimisation 120 FPS et règles d'éco-conception.
+
+---
+
+## 5. Feuille de Route d'Implémentation Technique
+
+1. **Sprint 1 (Architecture & Clean Core)** :
+   - Refactorisation de `MainActivity` vers le pattern MVI (`HomeViewModel`, `HomeUiState` immutable).
+   - Découpage modulaire du projet (`:core:designsystem`, `:core:plugin`, `:feature:home`).
+2. **Sprint 2 (Moteur de Thèmes & Plugins Local)** :
+   - Implémentation de `OSauceThemeEngine` pour appliquer des palettes dynamiques à chaud.
+   - Extension de `PluginManager` avec registre local de manifests.
+3. **Sprint 3 (Backend & Synchronisation)** :
+   - Mise en place de l'API cloud (Auth + Registry des mods).
+   - Intégration du client réseau dans l'application mobile.
+4. **Sprint 4 (Store In-App & Plateforme Web)** :
+   - Écran `ModStoreScreen` dans l'application.
+   - Plateforme web `osauce.io` avec catalogue communautaire.
