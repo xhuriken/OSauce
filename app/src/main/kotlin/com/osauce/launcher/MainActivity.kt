@@ -12,7 +12,13 @@ import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.osauce.launcher.core.designsystem.BackgroundVibrancy
 import com.osauce.launcher.core.designsystem.CellShapeMode
@@ -22,10 +28,13 @@ import com.osauce.launcher.core.util.launchSafe
 import com.osauce.launcher.feature.drawer.AppDrawerScreen
 import com.osauce.launcher.feature.home.HomeScreen
 import com.osauce.launcher.feature.home.rememberHomeState
+import com.osauce.launcher.feature.hub.ActionHubScreen
 import com.osauce.launcher.feature.settings.SettingsScreen
 import com.osauce.launcher.ui.LauncherUiIntent
 import com.osauce.launcher.ui.LauncherViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 class MainActivity : ComponentActivity() {
 
     private val viewModel: LauncherViewModel by viewModels()
@@ -58,36 +67,77 @@ class MainActivity : ComponentActivity() {
                     ) { screen ->
                         when (screen) {
                             "home" -> {
-                                val homeState = rememberHomeState(showSeconds = uiState.showSeconds)
+                                val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+                                val coroutineScope = rememberCoroutineScope()
 
-                                HomeScreen(
-                                    state = homeState,
-                                    calmMessage = uiState.calmMessage,
-                                    onToggleSeconds = {
-                                        viewModel.onIntent(LauncherUiIntent.ToggleSeconds)
-                                    },
-                                    onDialer = {
-                                        launchSafe(Intent(Intent.ACTION_DIAL))
-                                    },
-                                    onMessages = {
-                                        val messagesIntent = Intent(Intent.ACTION_MAIN).apply {
-                                            addCategory(Intent.CATEGORY_APP_MESSAGING)
-                                        }
-                                        launchSafe(messagesIntent)
-                                    },
-                                    onCamera = {
-                                        launchSafe(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA))
-                                    },
-                                    onOpenApps = {
-                                        viewModel.onIntent(LauncherUiIntent.NavigateTo("apps"))
-                                    },
-                                    onOpenDigest = {
-                                        // Notification digest (planned)
-                                    },
-                                    onOpenSettings = {
-                                        viewModel.onIntent(LauncherUiIntent.NavigateTo("settings"))
+                                BackHandler(enabled = pagerState.currentPage != 0) {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(0)
                                     }
-                                )
+                                }
+
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier.fillMaxSize()
+                                ) { page ->
+                                    when (page) {
+                                        0 -> {
+                                            val homeState = rememberHomeState(showSeconds = uiState.showSeconds)
+
+                                            HomeScreen(
+                                                state = homeState,
+                                                calmMessage = uiState.calmMessage,
+                                                onToggleSeconds = {
+                                                    viewModel.onIntent(LauncherUiIntent.ToggleSeconds)
+                                                },
+                                                onDialer = {
+                                                    launchSafe(Intent(Intent.ACTION_DIAL))
+                                                },
+                                                onMessages = {
+                                                    val messagesIntent = Intent(Intent.ACTION_MAIN).apply {
+                                                        addCategory(Intent.CATEGORY_APP_MESSAGING)
+                                                    }
+                                                    launchSafe(messagesIntent)
+                                                },
+                                                onCamera = {
+                                                    launchSafe(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA))
+                                                },
+                                                onOpenApps = {
+                                                    viewModel.onIntent(LauncherUiIntent.NavigateTo("apps"))
+                                                },
+                                                onOpenDigest = {
+                                                    coroutineScope.launch {
+                                                        pagerState.animateScrollToPage(1)
+                                                    }
+                                                },
+                                                onOpenSettings = {
+                                                    viewModel.onIntent(LauncherUiIntent.NavigateTo("settings"))
+                                                }
+                                            )
+                                        }
+
+                                        1 -> {
+                                            ActionHubScreen(
+                                                state = uiState.hubState,
+                                                onQueryChange = { query ->
+                                                    viewModel.onIntent(LauncherUiIntent.UpdateHubQuery(query))
+                                                },
+                                                onSubmitQuery = {
+                                                    viewModel.onIntent(LauncherUiIntent.SubmitHubQuery)
+                                                },
+                                                onSelectSphere = { sphereId ->
+                                                    viewModel.onIntent(LauncherUiIntent.SelectSphere(sphereId))
+                                                },
+                                                onToggleTodo = { todo ->
+                                                    viewModel.onIntent(LauncherUiIntent.ToggleTodo(todo))
+                                                },
+                                                onDeleteTodo = { todo ->
+                                                    viewModel.onIntent(LauncherUiIntent.DeleteTodo(todo))
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
                             }
 
                             "apps" -> {

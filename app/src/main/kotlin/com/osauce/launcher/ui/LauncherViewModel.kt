@@ -8,8 +8,14 @@ import com.osauce.launcher.core.designsystem.CellShapeMode
 import com.osauce.launcher.core.designsystem.InteractiveBackgroundConfig
 import com.osauce.launcher.core.designsystem.OSauceThemeEngine
 import com.osauce.launcher.core.designsystem.ThemeMod
+import com.osauce.launcher.data.local.OSauceDatabaseHelper
+import com.osauce.launcher.data.local.SphereLocalSource
+import com.osauce.launcher.data.local.TodoLocalSource
 import com.osauce.launcher.data.model.AppItem
+import com.osauce.launcher.data.model.TodoItem
 import com.osauce.launcher.data.repository.AppRepository
+import com.osauce.launcher.data.repository.SphereRepository
+import com.osauce.launcher.data.repository.TodoRepository
 import com.osauce.launcher.data.settings.SettingsPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +30,10 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     private val prefs = SettingsPreferences(application)
     val themeEngine = OSauceThemeEngine(application)
     private val appRepository = AppRepository(application)
+
+    private val dbHelper = OSauceDatabaseHelper.getInstance(application)
+    private val sphereRepository = SphereRepository(SphereLocalSource(dbHelper))
+    private val todoRepository = TodoRepository(TodoLocalSource(dbHelper))
 
     private val _uiState = MutableStateFlow(
         LauncherUiState(
@@ -68,6 +78,39 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 current.copy(availableThemes = themeEngine.getAllThemes())
             }
         }.launchIn(viewModelScope)
+
+        // Observe spheres from repository
+        sphereRepository.spheres.onEach { spheresList ->
+            _uiState.update { current ->
+                val selectedId = current.hubState.selectedSphereId
+                val validSelectedId = if (selectedId != null && spheresList.any { it.id == selectedId }) {
+                    selectedId
+                } else {
+                    null
+                }
+                current.copy(
+                    hubState = current.hubState.copy(
+                        spheres = spheresList,
+                        selectedSphereId = validSelectedId
+                    )
+                )
+            }
+        }.launchIn(viewModelScope)
+
+        // Observe todos from repository
+        todoRepository.todos.onEach { todosList ->
+            _uiState.update { current ->
+                current.copy(
+                    hubState = current.hubState.copy(todos = todosList)
+                )
+            }
+        }.launchIn(viewModelScope)
+
+        // Load initial data
+        viewModelScope.launch {
+            sphereRepository.loadSpheres()
+            todoRepository.loadTodos()
+        }
 
         loadApps()
     }
@@ -172,6 +215,52 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                         appSearchQuery = intent.query,
                         filteredApps = filterApps(current.installedApps, intent.query)
                     )
+                }
+            }
+            is LauncherUiIntent.SelectSphere -> {
+                _uiState.update { current ->
+                    current.copy(
+                        hubState = current.hubState.copy(selectedSphereId = intent.sphereId)
+                    )
+                }
+            }
+            is LauncherUiIntent.UpdateHubQuery -> {
+                _uiState.update { current ->
+                    current.copy(
+                        hubState = current.hubState.copy(quickInputText = intent.query)
+                    )
+                }
+            }
+            LauncherUiIntent.SubmitHubQuery -> {
+                val text = _uiState.value.hubState.quickInputText.trim()
+                if (text.isNotBlank()) {
+                    val targetSphereId = _uiState.value.hubState.selectedSphereId
+                        ?: _uiState.value.hubState.spheres.firstOrNull()?.id
+                        ?: "sphere_humans"
+
+                    val newTodo = TodoItem(
+                        sphereId = targetSphereId,
+                        title = text
+                    )
+
+                    viewModelScope.launch {
+                        todoRepository.addTodo(newTodo)
+                        _uiState.update { current ->
+                            current.copy(
+                                hubState = current.hubState.copy(quickInputText = "")
+                            )
+                        }
+                    }
+                }
+            }
+            is LauncherUiIntent.ToggleTodo -> {
+                viewModelScope.launch {
+                    todoRepository.toggleCompleted(intent.todo.id, !intent.todo.isCompleted)
+                }
+            }
+            is LauncherUiIntent.DeleteTodo -> {
+                viewModelScope.launch {
+                    todoRepository.deleteTodo(intent.todo.id)
                 }
             }
         }

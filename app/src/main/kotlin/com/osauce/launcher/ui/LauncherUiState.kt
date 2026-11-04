@@ -6,6 +6,9 @@ import com.osauce.launcher.core.designsystem.CellShapeMode
 import com.osauce.launcher.core.designsystem.InteractiveBackgroundConfig
 import com.osauce.launcher.core.designsystem.ThemeMod
 import com.osauce.launcher.data.model.AppItem
+import com.osauce.launcher.data.model.Sphere
+import com.osauce.launcher.data.model.TodoItem
+import com.osauce.launcher.feature.hub.ActionHubUiState
 
 @Immutable
 data class LauncherUiState(
@@ -19,7 +22,9 @@ data class LauncherUiState(
     val installedApps: List<AppItem> = emptyList(),
     val appSearchQuery: String = "",
     val filteredApps: List<AppItem> = emptyList(),
-    val isAppsLoading: Boolean = false
+    val isAppsLoading: Boolean = false,
+    // Action Hub state
+    val hubState: ActionHubUiState = ActionHubUiState()
 )
 
 sealed interface LauncherUiIntent {
@@ -37,6 +42,13 @@ sealed interface LauncherUiIntent {
     data object LoadInstalledApps : LauncherUiIntent
     data class SearchApps(val query: String) : LauncherUiIntent
     data object HandleBackPress : LauncherUiIntent
+
+    // Action Hub intents
+    data class SelectSphere(val sphereId: String?) : LauncherUiIntent
+    data class UpdateHubQuery(val query: String) : LauncherUiIntent
+    data object SubmitHubQuery : LauncherUiIntent
+    data class ToggleTodo(val todo: TodoItem) : LauncherUiIntent
+    data class DeleteTodo(val todo: TodoItem) : LauncherUiIntent
 }
 
 sealed interface LauncherUiEffect {
