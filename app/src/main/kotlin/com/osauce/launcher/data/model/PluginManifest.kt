@@ -6,6 +6,7 @@ enum class PluginCategory {
     SANTE_BIENETRE,
     SHADERS_ANIMATIONS,
     WIDGETS_SOBRES,
+    THEMES,
     COMMUNAUTE
 }
 
