@@ -5,68 +5,169 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import com.osauce.launcher.ui.screens.SilenceScreen
-import com.osauce.launcher.ui.theme.OSauceTheme
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.osauce.launcher.core.designsystem.BackgroundVibrancy
+import com.osauce.launcher.core.designsystem.CellShapeMode
+import com.osauce.launcher.core.designsystem.FluidBackground
+import com.osauce.launcher.core.designsystem.OSauceTheme
+import com.osauce.launcher.core.util.launchSafe
+import com.osauce.launcher.feature.drawer.AppDrawerScreen
+import com.osauce.launcher.feature.home.HomeScreen
+import com.osauce.launcher.feature.home.rememberHomeState
+import com.osauce.launcher.feature.settings.SettingsScreen
+import com.osauce.launcher.ui.LauncherUiIntent
+import com.osauce.launcher.ui.LauncherViewModel
 
-/**
- * MainActivity is the front door of our Android application.
- *
- * In Android:
- * - An "Activity" represents a single focused screen/window that the user interacts with.
- * - In AndroidManifest.xml, this Activity is registered with the category "HOME",
- *   which tells Android: "Hey, I can act as the main home screen (launcher) of this phone."
- */
 class MainActivity : ComponentActivity() {
 
-    /**
-     * onCreate() is the very first method Android calls when launching our Activity.
-     * Think of it like the constructor or 'DOMContentLoaded' in web development.
-     */
+    private val viewModel: LauncherViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-        // setContent { } is where Jetpack Compose takes over the Android window.
-        // Instead of old XML files, everything inside this block is modern Kotlin UI.
         setContent {
-            // Apply our OLED theme (colors, fonts) across the entire app
-            OSauceTheme {
-                // Display Screen 1: The Silence
-                SilenceScreen(
-                    onDialer = {
-                        // ACTION_DIAL tells Android: "Open whichever phone app the user has to dial a number"
-                        val dialerIntent = Intent(Intent.ACTION_DIAL)
-                        startActivitySafe(dialerIntent)
-                    },
-                    onCamera = {
-                        // ACTION_STILL_IMAGE_CAMERA tells Android: "Open the default camera app"
-                        val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                        startActivitySafe(cameraIntent)
-                    },
-                    onOpenDefaultHomeSettings = {
-                        // ACTION_HOME_SETTINGS opens Android's system menu where the user can pick
-                        // which app is their default launcher (allows them to easily switch back if needed).
-                        val homeSettingsIntent = Intent(Settings.ACTION_HOME_SETTINGS)
-                        startActivitySafe(homeSettingsIntent)
-                    }
-                )
-            }
-        }
-    }
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    /**
-     * Helper function to launch external applications safely.
-     *
-     * Why is this needed?
-     * If an emulator or weird budget tablet does not have a camera or phone dialer installed,
-     * calling startActivity() directly would throw an ActivityNotFoundException and crash the app.
-     * The try-catch block makes sure our launcher never crashes.
-     */
-    private fun startActivitySafe(intent: Intent) {
-        try {
-            startActivity(intent)
-        } catch (_: Exception) {
-            // Silently ignore if no app exists to handle this action
+            OSauceTheme(themeMod = uiState.activeTheme) {
+                BackHandler(enabled = uiState.currentScreen != "home") {
+                    viewModel.onIntent(LauncherUiIntent.HandleBackPress)
+                }
+
+                FluidBackground(config = uiState.backgroundConfig) {
+                    AnimatedContent(
+                        targetState = uiState.currentScreen,
+                        transitionSpec = {
+                            if (targetState == "settings" || targetState == "apps") {
+                                (slideInVertically(tween(320, easing = FastOutSlowInEasing)) { it / 3 } + fadeIn(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(260)) { -it / 6 } + fadeOut(tween(200)))
+                            } else {
+                                (slideInVertically(tween(320, easing = FastOutSlowInEasing)) { -it / 6 } + fadeIn(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(260)) { it / 3 } + fadeOut(tween(200)))
+                            }
+                        },
+                        label = "screen_navigation"
+                    ) { screen ->
+                        when (screen) {
+                            "home" -> {
+                                val homeState = rememberHomeState(showSeconds = uiState.showSeconds)
+
+                                HomeScreen(
+                                    state = homeState,
+                                    calmMessage = uiState.calmMessage,
+                                    onToggleSeconds = {
+                                        viewModel.onIntent(LauncherUiIntent.ToggleSeconds)
+                                    },
+                                    onDialer = {
+                                        launchSafe(Intent(Intent.ACTION_DIAL))
+                                    },
+                                    onMessages = {
+                                        val messagesIntent = Intent(Intent.ACTION_MAIN).apply {
+                                            addCategory(Intent.CATEGORY_APP_MESSAGING)
+                                        }
+                                        launchSafe(messagesIntent)
+                                    },
+                                    onCamera = {
+                                        launchSafe(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA))
+                                    },
+                                    onOpenApps = {
+                                        viewModel.onIntent(LauncherUiIntent.NavigateTo("apps"))
+                                    },
+                                    onOpenDigest = {
+                                        // Notification digest (planned)
+                                    },
+                                    onOpenSettings = {
+                                        viewModel.onIntent(LauncherUiIntent.NavigateTo("settings"))
+                                    }
+                                )
+                            }
+
+                            "apps" -> {
+                                AppDrawerScreen(
+                                    apps = uiState.filteredApps,
+                                    searchQuery = uiState.appSearchQuery,
+                                    isLoading = uiState.isAppsLoading,
+                                    onSearchQueryChange = { query ->
+                                        viewModel.onIntent(LauncherUiIntent.SearchApps(query))
+                                    },
+                                    onLaunchApp = { app ->
+                                        val launchIntent = packageManager.getLaunchIntentForPackage(app.packageName)
+                                        if (launchIntent != null) {
+                                            launchSafe(launchIntent)
+                                        }
+                                    },
+                                    onBack = {
+                                        viewModel.onIntent(LauncherUiIntent.HandleBackPress)
+                                    }
+                                )
+                            }
+
+                            "settings" -> {
+                                SettingsScreen(
+                                    showSeconds = uiState.showSeconds,
+                                    calmMessage = uiState.calmMessage,
+                                    bgVibrancy = uiState.backgroundConfig.vibrancy.name,
+                                    cellShape = uiState.backgroundConfig.cellShape.name,
+                                    gridDensity = uiState.gridDensity,
+                                    touchParticles = uiState.backgroundConfig.touchBurstEnabled,
+                                    dragParticles = uiState.backgroundConfig.dragTrailEnabled,
+                                    activeTheme = uiState.activeTheme,
+                                    availableThemes = uiState.availableThemes,
+                                    onSelectTheme = { theme ->
+                                        viewModel.onIntent(LauncherUiIntent.SelectTheme(theme))
+                                    },
+                                    onImportTheme = { jsonStr ->
+                                        viewModel.onIntent(LauncherUiIntent.ImportTheme(jsonStr))
+                                    },
+                                    onToggleSeconds = {
+                                        viewModel.onIntent(LauncherUiIntent.ToggleSeconds)
+                                    },
+                                    onSaveCalmMessage = { newMsg ->
+                                        viewModel.onIntent(LauncherUiIntent.UpdateCalmMessage(newMsg))
+                                    },
+                                    onChangeVibrancy = { newVibrancy ->
+                                        viewModel.onIntent(
+                                            LauncherUiIntent.UpdateVibrancy(
+                                                BackgroundVibrancy.fromName(newVibrancy)
+                                            )
+                                        )
+                                    },
+                                    onChangeCellShape = { newShape ->
+                                        viewModel.onIntent(
+                                            LauncherUiIntent.UpdateCellShape(
+                                                CellShapeMode.fromName(newShape)
+                                            )
+                                        )
+                                    },
+                                    onChangeGridDensity = { newDensity ->
+                                        viewModel.onIntent(LauncherUiIntent.UpdateGridDensity(newDensity))
+                                    },
+                                    onToggleTouchParticles = { enabled ->
+                                        viewModel.onIntent(LauncherUiIntent.SetTouchParticles(enabled))
+                                    },
+                                    onToggleDragParticles = { enabled ->
+                                        viewModel.onIntent(LauncherUiIntent.SetDragParticles(enabled))
+                                    },
+                                    onOpenDefaultHomeSettings = {
+                                        launchSafe(Intent(Settings.ACTION_HOME_SETTINGS))
+                                    },
+                                    onBack = {
+                                        viewModel.onIntent(LauncherUiIntent.HandleBackPress)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
