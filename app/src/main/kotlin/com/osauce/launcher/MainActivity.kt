@@ -133,6 +133,15 @@ class MainActivity : ComponentActivity() {
                                                 },
                                                 onDeleteTodo = { todo ->
                                                     viewModel.onIntent(LauncherUiIntent.DeleteTodo(todo))
+                                                },
+                                                onCreateSphere = { name, icon, colorHex ->
+                                                    viewModel.onIntent(LauncherUiIntent.CreateSphere(name, icon, colorHex))
+                                                },
+                                                onUpdateSphere = { sphere ->
+                                                    viewModel.onIntent(LauncherUiIntent.UpdateSphere(sphere))
+                                                },
+                                                onDeleteSphere = { sphereId ->
+                                                    viewModel.onIntent(LauncherUiIntent.DeleteSphere(sphereId))
                                                 }
                                             )
                                         }

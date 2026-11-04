@@ -12,6 +12,7 @@ import com.osauce.launcher.data.local.OSauceDatabaseHelper
 import com.osauce.launcher.data.local.SphereLocalSource
 import com.osauce.launcher.data.local.TodoLocalSource
 import com.osauce.launcher.data.model.AppItem
+import com.osauce.launcher.data.model.Sphere
 import com.osauce.launcher.data.model.TodoItem
 import com.osauce.launcher.data.repository.AppRepository
 import com.osauce.launcher.data.repository.SphereRepository
@@ -261,6 +262,32 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             is LauncherUiIntent.DeleteTodo -> {
                 viewModelScope.launch {
                     todoRepository.deleteTodo(intent.todo.id)
+                }
+            }
+            is LauncherUiIntent.CreateSphere -> {
+                viewModelScope.launch {
+                    val newSphere = Sphere(
+                        name = intent.name.trim(),
+                        icon = intent.icon,
+                        colorHex = intent.colorHex,
+                        sortOrder = sphereRepository.spheres.value.size
+                    )
+                    sphereRepository.saveSphere(newSphere)
+                }
+            }
+            is LauncherUiIntent.UpdateSphere -> {
+                viewModelScope.launch {
+                    sphereRepository.saveSphere(intent.sphere)
+                }
+            }
+            is LauncherUiIntent.DeleteSphere -> {
+                viewModelScope.launch {
+                    sphereRepository.deleteSphere(intent.sphereId)
+                    if (_uiState.value.hubState.selectedSphereId == intent.sphereId) {
+                        _uiState.update { current ->
+                            current.copy(hubState = current.hubState.copy(selectedSphereId = null))
+                        }
+                    }
                 }
             }
         }

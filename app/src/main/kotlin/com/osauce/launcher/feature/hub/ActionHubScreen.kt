@@ -1,15 +1,11 @@
 package com.osauce.launcher.feature.hub
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,7 +14,9 @@ import androidx.compose.ui.unit.sp
 import com.osauce.launcher.core.designsystem.LocalThemeColors
 import com.osauce.launcher.core.designsystem.OSauceTypography
 import com.osauce.launcher.data.model.Sphere
+import com.osauce.launcher.data.model.SphereIcon
 import com.osauce.launcher.data.model.TodoItem
+import com.osauce.launcher.feature.hub.components.EditSphereDialog
 import com.osauce.launcher.feature.hub.components.QuickCaptureBar
 import com.osauce.launcher.feature.hub.components.SphereSelectorRow
 import com.osauce.launcher.feature.hub.components.TodoItemRow
@@ -34,9 +32,47 @@ fun ActionHubScreen(
     onSelectSphere: (String?) -> Unit,
     onToggleTodo: (TodoItem) -> Unit,
     onDeleteTodo: (TodoItem) -> Unit,
+    onCreateSphere: (name: String, icon: SphereIcon, colorHex: String) -> Unit,
+    onUpdateSphere: (Sphere) -> Unit,
+    onDeleteSphere: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val themeColors = LocalThemeColors.current
+
+    var editingSphere by remember { mutableStateOf<Sphere?>(null) }
+    var isCreatingSphere by remember { mutableStateOf(false) }
+
+    // Dialog for creating or modifying a life sphere
+    if (isCreatingSphere || editingSphere != null) {
+        EditSphereDialog(
+            sphere = editingSphere,
+            onDismiss = {
+                isCreatingSphere = false
+                editingSphere = null
+            },
+            onSave = { name, icon, colorHex ->
+                if (editingSphere != null) {
+                    onUpdateSphere(
+                        editingSphere!!.copy(
+                            name = name,
+                            icon = icon,
+                            colorHex = colorHex
+                        )
+                    )
+                } else {
+                    onCreateSphere(name, icon, colorHex)
+                }
+                isCreatingSphere = false
+                editingSphere = null
+            },
+            onDelete = editingSphere?.takeIf { !it.isDefault }?.let { target ->
+                {
+                    onDeleteSphere(target.id)
+                    editingSphere = null
+                }
+            }
+        )
+    }
 
     Column(
         modifier = modifier
@@ -83,11 +119,13 @@ fun ActionHubScreen(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        // Spheres Row
+        // Spheres Row with Add & Long-press Edit
         SphereSelectorRow(
             spheres = state.spheres,
             selectedSphereId = state.selectedSphereId,
-            onSelectSphere = onSelectSphere
+            onSelectSphere = onSelectSphere,
+            onAddSphere = { isCreatingSphere = true },
+            onEditSphere = { sphere -> editingSphere = sphere }
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -139,13 +177,14 @@ fun ActionHubScreen(
                         items = state.activeTodos,
                         key = { it.id }
                     ) { todo ->
-                        val sphereColor = state.spheres.firstOrNull { it.id == todo.sphereId }?.let {
+                        val sphere = state.spheres.firstOrNull { it.id == todo.sphereId }
+                        val accentColor = sphere?.let {
                             runCatching { Color(android.graphics.Color.parseColor(it.colorHex)) }.getOrNull()
                         } ?: themeColors.primaryAccent
 
                         TodoItemRow(
                             todo = todo,
-                            accentColor = sphereColor,
+                            accentColor = accentColor,
                             onToggle = { onToggleTodo(todo) },
                             onDelete = { onDeleteTodo(todo) }
                         )
@@ -160,7 +199,7 @@ fun ActionHubScreen(
                             style = OSauceTypography.SecondsClock.copy(
                                 fontSize = 11.sp,
                                 letterSpacing = 1.sp,
-                                color = themeColors.textSecondary.copy(alpha = 0.6f)
+                                color = themeColors.textSecondary
                             ),
                             modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
                         )
@@ -170,13 +209,14 @@ fun ActionHubScreen(
                         items = state.completedTodos,
                         key = { it.id }
                     ) { todo ->
-                        val sphereColor = state.spheres.firstOrNull { it.id == todo.sphereId }?.let {
+                        val sphere = state.spheres.firstOrNull { it.id == todo.sphereId }
+                        val accentColor = sphere?.let {
                             runCatching { Color(android.graphics.Color.parseColor(it.colorHex)) }.getOrNull()
                         } ?: themeColors.primaryAccent
 
                         TodoItemRow(
                             todo = todo,
-                            accentColor = sphereColor,
+                            accentColor = accentColor,
                             onToggle = { onToggleTodo(todo) },
                             onDelete = { onDeleteTodo(todo) }
                         )

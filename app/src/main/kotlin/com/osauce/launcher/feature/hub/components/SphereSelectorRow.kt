@@ -2,12 +2,15 @@ package com.osauce.launcher.feature.hub.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -25,13 +28,16 @@ import com.osauce.launcher.core.designsystem.OSauceTypography
 import com.osauce.launcher.data.model.Sphere
 
 /**
- * Horizontal selector for life spheres with clean vector iconography.
+ * Horizontal selector for life spheres with clean vector iconography,
+ * long-press to edit and plus button to create custom spheres.
  */
 @Composable
 fun SphereSelectorRow(
     spheres: List<Sphere>,
     selectedSphereId: String?,
     onSelectSphere: (String?) -> Unit,
+    onAddSphere: () -> Unit,
+    onEditSphere: (Sphere) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val themeColors = LocalThemeColors.current
@@ -39,7 +45,8 @@ fun SphereSelectorRow(
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 4.dp)
+        contentPadding = PaddingValues(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         // "All" filter pill
         item(key = "all_spheres") {
@@ -67,19 +74,42 @@ fun SphereSelectorRow(
                 icon = OSauceIcons.forSphere(sphere.icon),
                 accentColor = parsedColor,
                 isSelected = isSelected,
-                onClick = { onSelectSphere(sphere.id) }
+                onClick = { onSelectSphere(sphere.id) },
+                onLongClick = { onEditSphere(sphere) }
             )
+        }
+
+        // Add Sphere button
+        item(key = "add_sphere_btn") {
+            Box(
+                modifier = Modifier
+                    .size(34.dp)
+                    .clip(CircleShape)
+                    .background(themeColors.surface)
+                    .border(1.dp, themeColors.border, CircleShape)
+                    .clickable(onClick = onAddSphere),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = OSauceIcons.Add,
+                    contentDescription = "Ajouter une sphère",
+                    tint = themeColors.textPrimary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SpherePill(
     label: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector?,
     accentColor: Color,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null
 ) {
     val themeColors = LocalThemeColors.current
     val pillShape = RoundedCornerShape(18.dp)
@@ -107,7 +137,10 @@ private fun SpherePill(
             .clip(pillShape)
             .background(bgColor)
             .border(1.dp, borderColor, pillShape)
-            .clickable(onClick = onClick)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
             .padding(horizontal = 14.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)

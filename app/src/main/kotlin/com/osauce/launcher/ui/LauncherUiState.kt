@@ -49,6 +49,9 @@ sealed interface LauncherUiIntent {
     data object SubmitHubQuery : LauncherUiIntent
     data class ToggleTodo(val todo: TodoItem) : LauncherUiIntent
     data class DeleteTodo(val todo: TodoItem) : LauncherUiIntent
+    data class CreateSphere(val name: String, val icon: com.osauce.launcher.data.model.SphereIcon, val colorHex: String) : LauncherUiIntent
+    data class UpdateSphere(val sphere: Sphere) : LauncherUiIntent
+    data class DeleteSphere(val sphereId: String) : LauncherUiIntent
 }
 
 sealed interface LauncherUiEffect {
