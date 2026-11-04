@@ -2,7 +2,7 @@ package com.osauce.launcher.core.designsystem
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Delete
@@ -27,7 +27,7 @@ import com.osauce.launcher.data.model.SphereIcon
 object OSauceIcons {
 
     val Add = Icons.Rounded.Add
-    val Back = Icons.Rounded.ArrowBack
+    val Back = Icons.AutoMirrored.Rounded.ArrowBack
     val Close = Icons.Rounded.Close
     val Search = Icons.Rounded.Search
     val Star = Icons.Rounded.Star
