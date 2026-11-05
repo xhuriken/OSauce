@@ -1,6 +1,6 @@
 # OSauce — Spécification des Écrans, Navigation & Réglages
 
-Guide de référence produit d'OpenSauce : navigation spatiale, description exhaustive de chaque écran, sous-écrans de réglages, modding et gestion du compte.
+Guide de référence produit d'OpenSauce : matrice SSOT de navigation, description exhaustive de chaque écran, réglages hiérarchisés et sous-systèmes.
 
 ---
 
@@ -30,7 +30,17 @@ Guide de référence produit d'OpenSauce : navigation spatiale, description exha
 
 ---
 
-## 3. Modèle Spatial Global de Navigation
+## 3. Matrice SSOT des Transitions & Navigation Spatiale
+
+Pour garantir une cohérence physique absolue (Apple Fluid Design & Emil Kowalski), chaque transition respecte une règle spatiale stricte :
+
+| Niveau | Axe Spatial | Transition Entrée / Sortie | Geste Déclencheur | Écrans concernés |
+|---|---|---|---|---|
+| **Niveau 0 : Horizontal (Le Monde)** | Axe X continu (1:1) | `HorizontalPager` interruptible, friction `spring(damping = 0.85f)` | Glisser gauche $\leftrightarrow$ droite | `Silence` $\longleftrightarrow$ `Action Hub` |
+| **Niveau 1 : Vertical (Les Tiroirs)** | Axe Y (Bas $\rightarrow$ Haut) | `slideInVertically` friction élastique + `scaleOut(0.96f)` du fond | Glisser vers le haut | `App Drawer` (Tiroir d'apps) |
+| **Niveau 2 : Modale Principale** | Élévation ascendante | Fondu + expansion douce depuis le point de contact | Appui long 500ms sur le fond ou icône engrenage | `SettingsHome` (Menu Réglages) |
+| **Niveau 3 : Drill-Down (Profondeur)** | Axe X Hiérarchique | **Push** : `slideInHorizontally(droite)` + `fadeIn`<br>**Pop** : `slideOutHorizontally(droite)` + `fadeOut` | Tap sur carte ou item de menu | • `Action Hub` $\rightarrow$ `SphereFocus`<br>• `Settings` $\rightarrow$ `ModsHub` $\rightarrow$ `ModDetail`<br>• `Settings` $\rightarrow$ `AuthProfile`<br>• `Settings` $\rightarrow$ `DataBackup` |
+| **Niveau 4 : Dialogues Contextuels** | Pop-up centré | Fond assombri (`alpha 0.5f`) + scale élastique (0.95x $\rightarrow$ 1.0x) | Tap sur bouton action | `EditSphereDialog`, Menu contextuel app |
 
 ```mermaid
 flowchart TD
@@ -41,39 +51,54 @@ flowchart TD
     Settings["Écran 4 : RÉGLAGES PRINCIPAUX"]
     EditModal["Modal 5 : ÉDITEUR DE SPHÈRE"]
     
-    %% Sous-écrans des réglages
-    ModsScreen["Écran 4-A : MODS & EXTENSIONS"]
-    AuthScreen["Écran 4-B : COMPTE OPENSAUCE"]
-    ProfileScreen["Écran 4-C : PROFIL CRÉATEUR"]
-    DataScreen["Écran 4-D : DONNÉES & SAUVEGARDE"]
+    %% Sous-écrans Réglages Niveau 3
+    ModsHub["Écran 4-A : HUB MODS & EXTENSIONS"]
+    ModDetail["Écran 4-A2 : DÉTAIL D'UN MOD"]
+    AuthProfile["Écran 4-B : COMPTE & CRÉATEUR"]
+    DataScreen["Écran 4-C : DONNÉES & SAUVEGARDE"]
 
-    Silence -- "Glisser vers la droite (Pager 1:1)" --> ActionHub
-    ActionHub -- "Glisser vers la gauche / Retour" --> Silence
-    ActionHub -- "Tap sur une carte Sphère" --> SphereFocus
-    SphereFocus -- "Bouton Retour / Tap Toutes" --> ActionHub
-    Silence -- "Glisser vers le haut" --> AppDrawer
-    AppDrawer -- "Glisser vers le bas / Retour" --> Silence
-    Silence -- "Appui long 500ms sur le fond" --> Settings
-    Settings -- "Fermer / Retour" --> Silence
-    ActionHub -- "Bouton [+ Sphère] ou Options" --> EditModal
-    SphereFocus -- "Bouton Options Sphère" --> EditModal
+    %% Niveau 0 : Pager
+    Silence <--"Niveau 0 : Pager 1:1"--> ActionHub
 
-    %% Navigation Réglages
-    Settings --> ModsScreen
-    Settings --> AuthScreen
-    Settings --> ProfileScreen
-    Settings --> DataScreen
+    %% Niveau 1 : Tiroir
+    Silence --"Niveau 1 : Swipe Haut"--> AppDrawer
+    AppDrawer --"Swipe Bas / Back"--> Silence
+
+    %% Niveau 2 : Modale Réglages
+    Silence --"Niveau 2 : Long press ou engrenage"--> Settings
+    ActionHub -.->|"Icône engrenage"| Settings
+    AppDrawer -.->|"Icône engrenage"| Settings
+    Settings --"Fermer / Back"--> Silence
+
+    %% Niveau 3 : Drill-Downs (Push / Pop)
+    ActionHub --"Niveau 3 : Tap Carte Sphère"--> SphereFocus
+    SphereFocus --"Bouton ← Retour"--> ActionHub
+
+    Settings --"Niveau 3 : Clic Mods"--> ModsHub
+    ModsHub --"Bouton ← Retour"--> Settings
+    ModsHub --"Niveau 3 : Tap Mod"--> ModDetail
+    ModDetail --"Bouton ← Retour"--> ModsHub
+
+    Settings --"Niveau 3 : Clic Compte"--> AuthProfile
+    AuthProfile --"Bouton ← Retour"--> Settings
+
+    Settings --"Niveau 3 : Clic Données"--> DataScreen
+    DataScreen --"Bouton ← Retour"--> Settings
+
+    %% Niveau 4 : Dialogues
+    ActionHub --"Niveau 4 : [+ Sphère] ou Edit"--> EditModal
+    SphereFocus --"Niveau 4 : Options Sphère"--> EditModal
 ```
 
 ---
 
-## 4. Spécification Détaillée des Écrans Principaux
+## 4. Spécification Détaillée des Écrans
 
 ### Écran 1 : SILENCE (Accueil)
 * **Rôle** : Accueil zen, zéro distraction.
 * **Composants** :
   1. **Horloge Space Grotesk** : Chiffres géants (96sp). Clic dessus pour afficher ou masquer les secondes.
-  2. **Jauge d'autonomie Canvas** : Trait vectoriel discret sous l'horloge indiquant le niveau de batterie sans chiffres anxiogènes.
+  2. **Jauge d'autonomie Canvas** : Trait vectoriel discret sous l'horloge montrant le niveau de batterie sans chiffres anxiogènes.
   3. **Matrice « The Sauce »** : Fond dynamique réactif au toucher (vagues de couleur et traînée particulaire au glisser). Physique delta-time qui s'adapte automatiquement à l'écran du téléphone.
   4. **Phrase personnalisée** : Texte court sous l'horloge (ex: *"Un seul pas à la fois"*).
   5. **Dock 4 essentiels** : Raccourcis directs (Téléphone, Messages, Caméra, Applications) avec micro-scale tactile (0.94x).
@@ -83,28 +108,24 @@ flowchart TD
 ### Écran 2 : ACTION HUB (Dashboard des Sphères)
 * **Rôle** : Vue d'ensemble de ses domaines de vie et capture d'intentions.
 * **Composants** :
-  1. **En-tête** : Titre `ACTION HUB` + `Sphères & Intentions` avec bouton visible **`[ + Sphère ]`** en haut à droite.
+  1. **En-tête** : Titre `ACTION HUB` + bouton visible **`[ + Sphère ]`** et icône engrenage d'accès direct aux réglages.
   2. **Grille de Cartes de Sphères (`SphereCard` en 2 colonnes)** :
      - 4 sphères par défaut : **Humains** (`#4ADE80`), **Travail** (`#60A5FA`), **Vital** (`#FBBF24`), **Loisirs** (`#A78BFA`), plus les sphères personnalisées.
-     - Chaque carte affiche :
-       * Symbole géométrique vectoriel (1.5dp, sans emoji).
-       * Nom de la sphère et halo de couleur.
-       * Badge du nombre de tâches en attente (ex: `2 tâches`).
-       * Mini-icônes des applications assignées (ex: Slack/Mail pour Travail).
-       * Bouton d'édition sur la carte.
+     - Chaque carte affiche : symbole géométrique vectoriel, nom, halo de couleur, badge du nombre de tâches en attente, mini-icônes des applications assignées, bouton d'édition.
+     - Tap sur la carte : transition Niveau 3 (Drill-Down) vers l'écran **Focus Sphère**.
      - Carte **`[ + Créer une sphère ]`** en pointillé à la fin de la grille.
   3. **Barre de Capture Rapide** : Champ texte en bas avec bouton `+`. Taper Entrée enregistre immédiatement la tâche en SQLite local.
   4. **Tâches en cours** :
-     - Clic case circulaire : rebond tactile et traçage progressif de la ligne barrée de gauche à droite.
+     - Clic case circulaire : rebond tactile et traçage progressif de la ligne barrée.
      - Glisser vers la droite (Swipe right) : valide la tâche.
      - Glisser vers la gauche (Swipe left) : supprime la tâche.
 
 ---
 
-### Écran 2-B : FOCUS SPHÈRE (Détail étanche)
+### Écran 2-B : FOCUS SPHÈRE (Détail étanche en Drill-Down)
 * **Rôle** : Isoler un contexte mental pour travailler ou se détendre sans distraction externe.
 * **Composants** :
-  1. **Bandeau de navigation** : Bouton `← Toutes les sphères`, nom et couleur de la sphère, bouton paramètres.
+  1. **Bandeau de navigation** : Bouton `← Toutes les sphères`, nom et couleur de la sphère active, bouton paramètres.
   2. **Dock d'applications de la sphère** : Uniquement les applications affectées à cette sphère (ex: Slack, Gmail, Notion pour Travail). Lancement direct en 1 tap.
   3. **Capture ciblée** : Toute nouvelle tâche saisie ici est pré-assignée à cette sphère.
   4. **Tâches du domaine** : Liste filtrée exclusive des tâches en cours et terminées de ce domaine.
@@ -115,102 +136,67 @@ flowchart TD
 * **Rôle** : Recherche intentionnelle rapide sans se perdre dans les icônes.
 * **Composants** :
   1. **Champ de recherche** : Clavier ouvert automatiquement dès le swipe pour filtrer au texte.
-  2. **Rail alphabétique A-Z** : Tranche tactile sur le bord droit pour sauter directement à une lettre.
+  2. **Rail alphabétique A-Z** : Tranche tactile sur le bord droit pour sauter directement à une lettre d'un glissement de pouce.
   3. **Liste d'applications monochromes** : Icônes traitées en noir & blanc pour calmer les stimuli visuels.
-  4. **Pastille de sphère** : Indicateur de couleur discret montrant le domaine de l'application.
-  5. **Menu contextuel (Appui long)** : Assigner à une sphère, ouvrir les informations système, désinstaller.
+  4. **Pastille de sphère** : Indicateur de couleur discret montrant le domaine auquel l'application appartient.
+  5. **Menu contextuel (Appui long Niveau 4)** : Assigner à une sphère, ouvrir les informations système, désinstaller.
+  6. **Icône engrenage en en-tête** : Accès direct aux Réglages sans repasser par le Silence Screen.
 
 ---
 
-## 5. Spécification Complète des Réglages & Sous-Écrans
-
-### Écran 4 : RÉGLAGES PRINCIPAUX (Organisé en 8 Sections)
-
-1. **Système & Lanceur** :
-   - Définir comme lanceur par défaut Android (`ACTION_HOME_SETTINGS`).
-   - Gestion des autorisations (Accès aux notifications pour le tri par sphère).
-   - Langue de l'interface (Français / Anglais).
-2. **Accueil & Silence** :
-   - Affichage des secondes dynamiques (toggle).
-   - Modification de la phrase de calme sous l'horloge.
-   - Configuration des 4 applications du dock rapide (choix personnalisé).
-3. **Moteur Sensoriel « The Sauce »** :
-   - Moteur d'arrière-plan actif (The Sauce natif ou mod tiers).
-   - Vibrance : *Subtile*, *Équilibrée*, *Éclatante*.
-   - Forme des cellules : *Carrés arrondis*, *Cellules organiques*, *Croix matrice (+)*.
-   - Densité : *Aéré (10x21)*, *Normal (15x32)*, *Dense (20x42)*.
-   - Effets tactiles : Vagues au toucher, Traînée au glisser (*Drag Trail*).
-4. **Apparence & Thèmes** :
-   - Presets de thèmes OLED (*Dark*, *Phosphore*, *Cyberpunk*, *Mono*, *Violet*).
-   - Bouton `[ Importer un thème JSON ]`.
-5. **Sphères de Vie** :
-   - Liste et réordonnancement des sphères.
-   - Bouton de création directe.
-   - Mods de comportement actifs (ex: planning horaire, focus strict).
-6. **Tiroir d'applications** :
-   - Toggle ouverture automatique du clavier au swipe.
-   - Toggle filtre monochrome (Noir & Blanc vs Couleurs d'origine).
-   - Gestion des applications masquées.
-7. **Extensions, Compte & Sauvegarde** :
-   - Accès à l'Écran 4-A (*Mods & Extensions*).
-   - Accès à l'Écran 4-B / 4-C (*Compte OpenSauce*).
-   - Accès à l'Écran 4-D (*Données & Sauvegarde*).
-8. **À propos & Projet Libre** :
-   - Version, code source GitHub, licence FOSS, crédits.
+### Écran 4 : RÉGLAGES PRINCIPAUX (Hub en 8 Sections)
+* **Rôle** : Hub d'aiguillage vers les réglages et les sous-écrans dédiés.
+* **Sections directes** :
+  1. **Système & Lanceur** : Définir comme lanceur par défaut Android (`ACTION_HOME_SETTINGS`), autorisations Android, langue.
+  2. **Accueil & Silence** : Secondes de l'horloge, phrase de calme, choix des 4 applications du dock rapide.
+  3. **Moteur Sensoriel « The Sauce »** : Moteur d'arrière-plan actif, vibrance, forme des cellules, densité, toggles particules et traînée (*Drag Trail*).
+  4. **Apparence & Thèmes** : Presets OLED, importation de thèmes JSON.
+  5. **Sphères de Vie** : Liste et réordonnancement, bouton de création directe.
+  6. **Tiroir d'applications** : Clavier auto-focus, filtre monochrome, applications masquées.
+  7. **Extensions, Compte & Données** : Tuiles de navigation Niveau 3 vers les 3 sous-écrans dédiés.
+  8. **À propos & Projet Libre** : Version, code source GitHub, licence FOSS.
 
 ---
 
-### Écran 4-A : MODS & EXTENSIONS (Gestionnaire & Découverte)
-* **Onglet « Installés »** :
-  - Liste de tous les mods présents (Thèmes, Moteurs d'arrière-plan, Comportements de sphères).
-  - Interrupteur ON/OFF individuel pour activer ou désactiver un mod sans le désinstaller.
+### Sous-Écrans Dédiés des Réglages (Drill-Down Niveau 3)
+
+#### Écran 4-A : HUB MODS & EXTENSIONS (Plein Écran)
+* **Bandeau supérieur** : Bouton `← Réglages` + Barre de recherche de mods.
+* **Onglet « Mes Mods »** :
+  - Liste de tous les mods installés (Thèmes, Arrière-plans, Hooks de sphères).
+  - Interrupteur ON/OFF individuel pour activer ou désactiver sans supprimer.
   - Bouton options / suppression.
-* **Onglet « Découvrir »** :
-  - Recherche et filtrage par catégorie (*Thèmes*, *Arrière-plans*, *Comportements*, *Outils*).
-  - Classement par popularité / nouveauté.
-* **Fiche Détail d'un Mod** :
-  - Titre, auteur, numéro de version, description des fonctionnalités.
-  - Aperçu visuel.
-  - Liste des permissions requises (ex: accès au stockage local pour synchro Markdown).
-  - Bouton Télécharger / Activer.
+* **Onglet « Explorer »** :
+  - Catalogue communautaire avec filtres (*Thèmes*, *Arrière-plans*, *Comportements*, *Outils*).
+  - Cartes avec titre, auteur, version et note.
+  - Clic sur une carte $\rightarrow$ Ouvre l'Écran 4-A2 (*Fiche Détail d'un Mod*).
+
+#### Écran 4-A2 : FICHE DÉTAIL D'UN MOD
+* Aperçu visuel plein format, auteur, numéro de version, description des fonctionnalités.
+* Liste des permissions requises (ex: accès au stockage local pour synchro Markdown).
+* Bouton Installer / Activer.
+
+#### Écran 4-B : COMPTE OPENSAUCE & ESPACE CRÉATEUR
+* **Bandeau supérieur** : Bouton `← Réglages`.
+* **État Invité (Déconnecté)** :
+  - Rappel : le mode local fonctionne à 100% sans compte.
+  - Formulaire de connexion / inscription (Pseudo, Email, Mot de passe).
+* **État Connecté (Profil & Créateur)** :
+  - Pseudo, email, badge rôle (`UTILISATEUR` ou `CRÉATEUR`).
+  - *Espace Créateur* : gestion des mods publiés, stats de téléchargements, bouton pour publier une nouvelle version.
+  - *Favoris synchronisés* : liste des mods bookmarqués réinstallables en un clic.
+  - Bouton Déconnexion.
+
+#### Écran 4-C : GESTION DES DONNÉES & SAUVEGARDE
+* **Bandeau supérieur** : Bouton `← Réglages`.
+* **Exporter** : Génère un fichier de sauvegarde `.osauce` ou `.json` (sphères, tâches, réglages, thèmes personnalisés).
+* **Importer une sauvegarde** : Restaure l'état complet du lanceur depuis un fichier local.
+* **Importer un style / mod externe** : Zone de saisie pour coller directement le JSON d'un thème ou d'un mod.
+* **Zone de purge** : Réinitialisation complète de la base SQLite locale.
 
 ---
 
-### Écran 4-B : COMPTE OPENSAUCE (Connexion / Inscription)
-* **Rappel bienveillant** : *"Le mode invité local fonctionne à 100% sans compte. Créez un compte si vous souhaitez publier des mods ou sauvegarder vos favoris."*
-* **Formulaire** :
-  - Champs : Nom d'utilisateur, Email, Mot de passe.
-  - Bascule rapide entre *Se connecter* et *Créer un compte*.
-* **Authentification sécurisée** : Connexion par token JWT stocké de façon chiffrée sur le téléphone.
-
----
-
-### Écran 4-C : PROFIL CRÉATEUR & SYNCHRONISATION
-* **En-tête Profil** : Pseudo, email, badge rôle (`UTILISATEUR` ou `CRÉATEUR`).
-* **Mes Créations Publiées** (Espace Créateur) :
-  - Liste de mes mods en ligne avec compteur de téléchargements et note moyenne.
-  - Bouton `[ Publier une nouvelle version ]`.
-* **Mes Favoris Synchronisés** :
-  - Liste des mods bookmarqués permettant de les réinstaller en un clic sur un autre appareil.
-* **Bouton Déconnexion** (retour au mode invité local).
-
----
-
-### Écran 4-D : DONNÉES & SAUVEGARDE (Import / Export)
-* **Exporter les données** :
-  - Génère un fichier de sauvegarde `.osauce` ou `.json` contenant : la liste de vos sphères, vos tâches en cours, vos réglages personnalisés et vos thèmes.
-  - Sauvegarde locale sur le stockage du téléphone ou partage vers un autre appareil.
-* **Importer une sauvegarde** :
-  - Sélection d'un fichier de sauvegarde pour restaurer ses données en un instant.
-* **Importer un style / mod externe** :
-  - Champ de saisie pour coller directement le JSON d'un thème ou lien vers un mod.
-* **Zone de purge** :
-  - Bouton de réinitialisation complète des données locales (purge de la base SQLite).
-
----
-
-### Modal 5 : ÉDITEUR / CRÉATEUR DE SPHÈRE (`EditSphereDialog`)
-* **Rôle** : Créer ou modifier une sphère en quelques secondes.
+### Modal 5 : ÉDITEUR / CRÉATEUR DE SPHÈRE (`EditSphereDialog` — Niveau 4)
 * **Composants** :
   1. **Nom** : Champ texte (ex: *Finances, Famille, Studio*).
   2. **Palette 8 couleurs** : Teintes sobres accordées au design OSauce.
