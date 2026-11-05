@@ -4,7 +4,35 @@ Guide de référence produit d'OpenSauce par défaut (sans plugin externe).
 
 ---
 
-## 1. Modèle Spatial & Navigation 2D
+## 1. L'Elevator Pitch (Matrice des 6 Blocs)
+
+Cadre de positionnement officiel d'OpenSauce, formulé du point de vue d'un développeur passionné qui résout un problème vécu :
+
+| Bloc | Description | Contenu |
+|---|---|---|
+| **POUR ?** | *La cible visée* | Les personnes (étudiants, créatifs, jeunes actifs) qui veulent un téléphone qui redevient un outil utile et apaisant, sans couper les ponts avec le monde moderne. |
+| **QUI ?** | *Le problème vécu* | En ont marre de passer 5h par jour sur leur smartphone sans s'en rendre compte, distraits par des flux mélangés et des interfaces conçues pour capter leur temps. |
+| **NOTRE PRODUIT** | *La nature du projet* | **OpenSauce (OSauce)** est un launcher Android libre, éco-conçu et modulaire développé nativement en Kotlin et Jetpack Compose. |
+| **QUI PERMET ?** | *Les capacités concrètes* | D'avoir un accueil calme avec l'heure en grand et 4 essentiels, de séparer sa vie en Sphères étanches (*Humains, Travail, Vital, Loisirs*), et de lancer n'importe quelle app au clavier en 2 secondes. |
+| **CONTRAIREMENT** | *Aux alternatives existantes* | Aux surcouches constructeurs lourdes et opaques, ou aux « dumbphones » rétrogrades qui bloquent les banques, le GPS et les billets de train. |
+| **NOUS** | *Le différenciateur unique* | Proposons un système 100% transparent, fluide sur n'importe quel téléphone, avec un fond interactif sensoriel et une architecture ouverte aux mods de la communauté. |
+
+---
+
+## 2. Trame Vidéo de Présentation (5 Minutes — Ton Chill)
+
+| Timing | Séquence | Ce qu'on montre & dit simplement |
+|---|---|---|
+| **0:00 - 1:00** | **Le Constat** | Montrer un téléphone encombré (tout est mélangé : messages persos, mails du travail, alertes inutiles). L'objectif d'OSauce : poser les choses, retrouver un téléphone calme, sans bloatware. |
+| **1:00 - 2:00** | **Écran 1 : Silence** | Déverrouillage : grande horloge Space Grotesk, fond interactif discret qui réagit au doigt (*The Sauce*), 4 raccourcis essentiels. Fluide sur n'importe quel téléphone Android (récent ou ancien). |
+| **2:00 - 3:15** | **Écran 2 : Action Hub & Sphères** | Glisser à droite. Présentation des Sphères réelles (*Humains, Travail, Vital, Loisirs*). Tap sur *Travail* : n'affiche que les outils pro et les tâches du domaine. Saisie rapide en bas et swipe sur les tâches (strikethrough progressif). |
+| **3:15 - 4:00** | **Écran 3 : Tiroir d'apps** | Glisser vers le haut : recherche immédiate au clavier, liste claire et rail A-Z. Trouver une app en 2 secondes au lieu de chercher parmi 50 icônes. |
+| **4:00 - 4:45** | **Écran 4 : Réglages, Compte & Mods** | Personnalisation du fond et des couleurs. Rappel éthique : mode local par défaut (base SQLite sur l'appareil), et compte OpenSauce pour les créateurs qui souhaitent publier leurs mods ou synchroniser leurs favoris. |
+| **4:45 - 5:00** | **Conclusion** | Projet gratuit, FOSS et disponible sur GitHub. |
+
+---
+
+## 3. Modèle Spatial & Navigation 2D
 
 La navigation repose sur un repère orthogonal simple, sans empilement complexe de fenêtres :
 
@@ -31,20 +59,7 @@ flowchart TD
 
 ---
 
-## 2. Trame Vidéo de Présentation (5 Minutes — Ton Chill)
-
-| Timing | Séquence | Ce qu'on montre & dit simplement |
-|---|---|---|
-| **0:00 - 1:00** | **Le Constat** | Montrer un téléphone encombré (tout est mélangé : messages persos, mails du travail, alertes inutiles). L'objectif d'OSauce : poser les choses, retrouver un téléphone calme, sans bloatware. |
-| **1:00 - 2:00** | **Écran 1 : Silence** | Déverrouillage : grande horloge Space Grotesk, fond interactif discret qui réagit au doigt, 4 raccourcis essentiels. Fluide sur n'importe quel téléphone Android (récent ou ancien). |
-| **2:00 - 3:15** | **Écran 2 : Action Hub & Sphères** | Glisser à droite. Présentation des Sphères réelles (*Humains, Travail, Vital, Loisirs*). Tap sur *Travail* : n'affiche que les outils pro et les tâches du domaine. Saisie rapide en bas et swipe sur les tâches (strikethrough progressif). |
-| **3:15 - 4:00** | **Écran 3 : Tiroir d'apps** | Glisser vers le haut : recherche immédiate au clavier, liste claire et rail A-Z. Trouver une app en 2 secondes au lieu de chercher parmi 50 icônes. |
-| **4:00 - 4:45** | **Écran 4 : Réglages & 100% Local** | Personnalisation du fond et des couleurs. Rappel éthique : 100% stocké en local sur l'appareil (base SQLite), zéro compte obligatoire, zéro serveur distant. |
-| **4:45 - 5:00** | **Conclusion** | Projet gratuit, FOSS et disponible sur GitHub. |
-
----
-
-## 3. Spécification Détaillée des Écrans
+## 4. Spécification Détaillée des Écrans
 
 ### Écran 1 : SILENCE (Accueil)
 * **Rôle** : Accueil zen, zéro distraction.
@@ -108,8 +123,9 @@ flowchart TD
      - Forme des cellules : *Carrés arrondis*, *Cellules organiques*, *Croix matrice (+)*.
      - Densité : *Aéré (10x21)*, *Normal (15x32)*, *Dense (20x42)*.
      - Effets : Particules au toucher, traînée au glisser (*Drag Trail*).
-  3. **Thèmes OLED** : *OLED Dark*, *Phosphore Vert*, *Ambre Cyberpunk*, *Papier Mono*, *Violet Profond*.
-  4. **Personnalisation** : Modification de la phrase de calme et toggle des secondes de l'horloge.
+  3. **Thèmes OLED** : Presets de couleurs d'accent.
+  4. **Compte & Synchronisation** : Statut du compte OpenSauce (Invité local ou Connecté créateur).
+  5. **Personnalisation** : Modification de la phrase de calme et toggle des secondes de l'horloge.
 
 ---
 

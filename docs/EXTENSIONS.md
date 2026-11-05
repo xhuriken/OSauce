@@ -1,26 +1,26 @@
-# OSauce — Système de Thèmes & Extensions
+# OSauce — Modding, Extensions & Comptes Créateurs
 
-Présentation de la modularité d'OpenSauce : personnalisation légère, sans serveur distant ni compte obligatoire.
-
----
-
-## 1. Philosophie
-La personnalisation dans OSauce respecte trois principes :
-1. **100% Local** : Tout mod ou thème s'exécute directement sur l'appareil.
-2. **Léger & Sans bloatware** : Pas de code obscur ou de scripts lourds.
-3. **Sécurisé** : L'interface repose sur des composants déclaratifs immuables.
+Guide de la modularité d'OpenSauce : architecture des extensions, moteurs d'arrière-plan et gestion des comptes utilisateurs.
 
 ---
 
-## 2. Niveaux de Personnalisation
+## 1. Philosophie du Modding
+Le système de modding d'OSauce repose sur trois principes :
+1. **Mode Invité / Local par défaut** : N'importe qui peut installer l'application et l'utiliser sans créer de compte (stockage 100% SQLite local sur l'appareil).
+2. **Modularité par "Slots"** : Les composants clés du lanceur (thèmes, arrière-plan réactif) sont conçus comme des emplacements interchangeables.
+3. **Compte OpenSauce pour les créateurs** : Un système d'authentification pour publier ses créations, synchroniser ses favoris et ses réglages entre appareils.
 
-### Niveau 1 : Thèmes Graphiques (JSON)
-Les thèmes d'OSauce sont de simples structures JSON injectées à chaud dans `OSauceThemeEngine` :
+---
+
+## 2. Niveaux de Mods & Le Cas d'`InteractiveBackground`
+
+### Niveau 1 : Thèmes Graphiques (JSON No-Code)
+Fichier JSON déclarant les couleurs d'accent, surfaces et contrastes, injecté dynamiquement dans `OSauceThemeEngine` :
 ```json
 {
-  "id": "theme_custom_nordic",
+  "id": "theme_nordic_frost",
   "name": "Nordic Frost",
-  "author": "Communauté",
+  "author": "celestin",
   "version": "1.0",
   "colors": {
     "background": "#0F141C",
@@ -35,12 +35,85 @@ Les thèmes d'OSauce sont de simples structures JSON injectées à chaud dans `O
   "vibrancy": "SUBTLE"
 }
 ```
-L'utilisateur peut importer un thème par simple copier-coller de son code JSON dans l'application.
 
-### Niveau 2 : Motifs d'Arrière-Plan & Shaders AGSL
-Le fond interactif « The Sauce » (`FluidBackground.kt`) sépare le calcul mathématique de la grille de son rendu graphique :
-* **Moteur par défaut** : 3 vortex d'ondes harmoniques en temps réel + gerbes particulaires tactiles.
-* **Compatibilité Shaders AGSL** : Sur Android 13+, utilisation de `RenderEffect.createRuntimeShaderEffect` pour créer des variantes esthétiques (ondes liquides, grilles géométriques, distorsions discrètes).
+### Niveau 2 : Moteurs d'Arrière-Plan (Slot `BackgroundEngine`)
+L'arrière-plan du lanceur est un slot modulaire :
+* **`The Sauce` (`InteractiveBackground.kt`)** : **C'est le mod natif de référence inclus d'office dans l'application.** Il calcule en temps réel une matrice de cellules réactive aux vortex d'ondes et aux contacts tactiles avec particules.
+* **Mods alternatifs créables par la communauté** : D'autres moteurs branchables sur la même interface :
+  - Automate cellulaire interactif (*Game of Life*).
+  - Shaders AGSL liquides (sur Android 13+ via `RenderEffect`).
+  - Visualiseur audio réactif en temps réel.
 
-### Niveau 3 : Export & Sauvegarde
-Les sphères personnalisées, intentions et réglages peuvent être exportés dans un fichier JSON pour sauvegarde ou réinstallation sur un nouvel appareil.
+### Niveau 3 : Modules & Widgets Composables
+Composants Jetpack Compose indépendants pouvant être insérés dans l'Action Hub ou le Silence Screen (ex: jauge d'activité, minuteur de concentration).
+
+---
+
+## 3. Le Système de Compte OpenSauce & Schéma SQL
+
+Pour répondre aux besoins de synchronisation et de gestion des créateurs, un backend avec base de données relationnelle SQL structure l'écosystème :
+
+### 3.1 Rôles Utilisateurs
+* **Invité (Guest)** : Aucun compte. Toutes les données sont en local sur le téléphone (SQLite Room).
+* **Utilisateur Connecté (`USER`)** : Peut bookmarker des mods favoris, noter des créations et synchroniser ses configurations (sphères de vie, thèmes préférés).
+* **Créateur (`CREATOR` / `ADMIN`)** : Peut publier des thèmes, des moteurs d'arrière-plan et mettre à jour les versions de ses mods.
+
+### 3.2 Schéma Relationnel SQL (PostgreSQL / SQLite)
+
+```mermaid
+erDiagram
+    USERS ||--o{ MODS : "publie"
+    USERS ||--o{ FAVORITES : "enregistre"
+    USERS ||--o{ RATINGS : "note"
+    MODS ||--|{ MOD_VERSIONS : "contient"
+    MODS ||--o{ FAVORITES : "est mis en favori"
+    MODS ||--o{ RATINGS : "reçoit"
+
+    USERS {
+        uuid id PK
+        string username
+        string email UK
+        string password_hash
+        string role "USER | CREATOR | ADMIN"
+        datetime created_at
+    }
+
+    MODS {
+        uuid id PK
+        uuid author_id FK
+        string title
+        string slug UK
+        string type "THEME | BACKGROUND | WIDGET"
+        string description
+        int download_count
+        datetime created_at
+    }
+
+    MOD_VERSIONS {
+        uuid id PK
+        uuid mod_id FK
+        string version_tag "1.0.0"
+        string manifest_json
+        string entry_point_url
+        datetime published_at
+    }
+
+    FAVORITES {
+        uuid user_id FK
+        uuid mod_id FK
+        datetime added_at
+    }
+
+    RATINGS {
+        uuid id PK
+        uuid user_id FK
+        uuid mod_id FK
+        int score "1..5"
+        text comment
+        datetime created_at
+    }
+```
+
+### 3.3 Synchronisation Téléphone $\leftrightarrow$ Compte
+* En mode connecté, l'application Android appelle l'API pour récupérer ses favoris et sauvegarder sa liste de sphères.
+* L'authentification utilise des tokens JWT sécurisés stockés dans le Keystore chiffré Android (`EncryptedSharedPreferences`).
