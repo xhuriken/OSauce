@@ -36,31 +36,13 @@ agent_logs/
 secrets/
 
 # ------------------------------------------------------------------------------
-# 3. RUST / CARGO (Builds et binaires)
-# ------------------------------------------------------------------------------
-/target/
-**/*.rs.bk
-*.pdb
-Cargo.lock.backup
-
-# ------------------------------------------------------------------------------
-# 4. ÉMULATEURS, IMAGES DISQUES & PMBOOTSTRAP (Local & Builds OS)
-# ------------------------------------------------------------------------------
-*.img
-*.iso
-*.qcow2
-*.vdi
-*.vmdk
-.pmbootstrap*
-pmbootstrap.cfg
-work/
-chroot/
-dist/
+# 3. ANDROID BUILDS
 build/
-pkg/
+app/build/
+*.apk
+*.aab
 
-# ------------------------------------------------------------------------------
-# 5. IDEs, ÉDITEURS & FICHIERS SYSTÈME LOCAL
+# 4. IDEs, ÉDITEURS & FICHIERS SYSTÈME LOCAL
 # ------------------------------------------------------------------------------
 .vscode/
 .idea/

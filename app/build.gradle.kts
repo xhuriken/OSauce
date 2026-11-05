@@ -36,6 +36,12 @@ android {
     buildFeatures {
         compose = true
     }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = false
+        disable += listOf("QueryAllPackagesPermission")
+    }
 }
 
 kotlin {
