@@ -1,87 +1,73 @@
-# Architecture Technique OSauce Launcher (Android & Jetpack Compose)
+# Architecture Technique OSauce Launcher
 
-Ce document formalise l'architecture logicielle du Launcher mobile **OSauce**, developpe en **Kotlin** moderne avec **Jetpack Compose**, intégrant la gestion des Groupes d'Action, l'interception des notifications et le Marketplace de modding communautaire.
+Architecture logicielle native Android (Kotlin 2.0 & Jetpack Compose), MVI unidirectionnel, persistance 100% hors-ligne SQLite.
 
 ---
 
-## 1. Diagramme Global des Composants
+## 1. Modèle Architectural Global (MVI Unidirectionnel)
 
 ```mermaid
 flowchart TD
-
-    subgraph UI_Layer["1. Couche Interface (Jetpack Compose)"]
-        MainActivity["MainActivity (Host)"]
-        SilenceScreen["Ecran 1 : Le Silence"]
-        HubScreen["Ecran 2 : Hub d'Action"]
-        GroupDetailScreen["Ecran 2-B : Groupe Deplie"]
-        ToolsScreen["Ecran 3 : Boîte a Outils"]
-        MarketplaceScreen["Ecran 4 : Marketplace Mods"]
-        Theme["OSauceTheme (OLED Black)"]
+    subgraph UI["Interface Utilisateur (Compose 120Hz)"]
+        MainActivity["MainActivity (HorizontalPager 1:1)"]
+        Silence["feature.silence (HomeScreen)"]
+        Hub["feature.hub (ActionHubScreen)"]
+        Drawer["feature.drawer (AppDrawerScreen)"]
+        Settings["feature.settings (SettingsScreen)"]
     end
 
-    subgraph Service_Layer["2. Couche Services Android"]
-        NotifService["NotificationService (Listener)"]
-        PkgManager["PackageManager (Lanceur d'apps)"]
-        Shaders["Moteur Shaders AGSL"]
+    subgraph State["Gestion d'État (ViewModel MVI)"]
+        VM["LauncherViewModel"]
+        StateFlow["LauncherUiState (StateFlow immuable)"]
+        IntentHandler["LauncherUiIntent (Intentions utilisateur)"]
     end
 
-    subgraph Data_Layer["3. Couche Donnees & Plugins"]
-        GroupModel["ActionGroup Repository"]
-        PluginMgr["PluginManager (Gestionnaire de Mods)"]
-        LocalStore[("Base Locale SQLite")]
+    subgraph Core["Noyau Sensoriel & Design System"]
+        TheSauce["FluidBackground (Matrice réactive 15x32)"]
+        ThemeEngine["OSauceThemeEngine (Thèmes OLED & Accents)"]
+        Icons["OSauceIcons (Vecteurs géométriques 1.5dp)"]
     end
 
-    subgraph External_Layer["4. Ecosysteme Externe"]
-        OsauceHub["Plateforme osauce.io (Mods Verifies)"]
-        AndroidOS["Systeme Android Natif"]
+    subgraph Data["Persistance Locale (100% Offline SQLite)"]
+        SphereRepo["SphereRepository"]
+        TodoRepo["TodoRepository"]
+        AppRepo["AppRepository (PackageManager)"]
+        Prefs["SettingsPreferences (SharedPreferences sync)"]
+        DB[("SQLite OSauceDatabaseHelper")]
     end
 
-    %% Interactions
-    MainActivity --> SilenceScreen
-    MainActivity --> HubScreen
-    MainActivity --> GroupDetailScreen
-    MainActivity --> ToolsScreen
-    MainActivity --> MarketplaceScreen
+    %% Flux MVI
+    UI -->|"Intent (Tap, Swipe, Input)"| IntentHandler
+    IntentHandler --> VM
+    VM -->|"Update State"| StateFlow
+    StateFlow -->|"Recomposition ciblée"| UI
 
-    SilenceScreen --> Theme
-    HubScreen --> GroupModel
-    GroupDetailScreen --> GroupModel
-    MarketplaceScreen --> PluginMgr
-
-    NotifService -->|"Route et classe les alertes"| GroupModel
-    ToolsScreen -->|"Lance l'application"| PkgManager
-    MainActivity -->|"Appels & Photo natifs"| AndroidOS
-
-    PluginMgr <-->|"Telecharge les manifests"| OsauceHub
-    GroupModel <--> LocalStore
-
-    classDef toneNavy fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
-    classDef toneCard fill:#1e293b,stroke:#64748b,stroke-width:1.5px,color:#f8fafc;
-    classDef toneAccent fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdf4;
-    classDef toneOrange fill:#431407,stroke:#fb923c,stroke-width:2px,color:#fff7ed;
-
-    class UI_Layer toneNavy;
-    class Service_Layer toneCard;
-    class Data_Layer toneAccent;
-    class External_Layer toneOrange;
+    %% Données
+    VM --> SphereRepo
+    VM --> TodoRepo
+    VM --> AppRepo
+    VM --> Prefs
+    SphereRepo --> DB
+    TodoRepo --> DB
+    UI -.-> TheSauce
 ```
 
 ---
 
-## 2. Description des Couches Logicielles
+## 2. Découpage des Modules
 
-### 2.1 Couche Présentation (`app/src/main/kotlin/com/osauce/launcher/ui/`)
-* **`MainActivity.kt`** : Point d'entrée de l'application déclaré comme `category.HOME` dans le manifest. Gère la machine à états de navigation entre les 4 écrans sans pile de retour encombrée.
-* **`SilenceScreen.kt`** : Écran d'accueil épuré avec l'horloge géante, la jauge de batterie sobre et la ligne d'intention unique.
-* **`HubScreen.kt`** : Flux des cartes de groupes de vie unifiant alertes, tâches et raccourcis d'outils.
-* **`GroupDetailScreen.kt`** : Vue plein écran intérieure d'un groupe avec conversion rapide d'une notification en tâche todo.
-* **`ToolsScreen.kt`** : Liste alphabétique monochrome des applications installées avec recherche instantanée.
-* **`MarketplaceScreen.kt`** : Vitrine des extensions et mods communautaires certifiés sans pistage ni publicité.
+### 2.1 Couche Présentation (`feature/`)
+* **`feature.silence`** : Écran d'accueil épuré. Horloge géante Space Grotesk, indicateur batterie discret Canvas, dock 4 essentiels.
+* **`feature.hub`** : Dashboard des Sphères de Vie (Humains, Travail, Vital, Loisirs), barre de capture rapide, liste de tâches avec physique de ressort (*spring*) et gestes de swipe.
+* **`feature.drawer`** : Tiroir d'applications alphabétique A-Z. Rendu monochrome GPU (`ColorMatrix`) neutralisant les couleurs dopaminergiques.
+* **`feature.settings`** : Contrôles de la matrice réactive (vibrance, morphologie, densité), sélecteur de thèmes OLED, définition du launcher par défaut (`ACTION_HOME_SETTINGS`).
 
-### 2.2 Couche Services Android (`app/src/main/kotlin/com/osauce/launcher/service/`)
-* **`NotificationService.kt`** : Hérite de `NotificationListenerService`. Intercepte les notifications du système, élimine les interruptions visuelles et les redirige de manière déterministe vers le bon groupe d'action (`CATEGORY_MESSAGE`, `CATEGORY_TRANSPORT`, `CATEGORY_EMAIL`).
-* **Intégration PackageManager** : Interroge les paquets du système sans surcoût mémoire pour lancer les applications d'un geste.
+### 2.2 Noyau Graphique (`core/designsystem/`)
+* **`FluidBackground.kt`** : Rendu GPU matériel via BitmapShader 1 seul appel drawPaint. Interpolation continue 120Hz sans allocation mémoire dans le cycle de rendu.
+* **`OSauceIcons.kt`** : Icônes sur-mesure dessinées en courbes de Bézier vectorielles pures. Zéro emoji et zéro artifice textuel.
 
-### 2.3 Couche Modding & Données (`app/src/main/kotlin/com/osauce/launcher/plugin/`)
-* **`PluginManager.kt`** : Orchestrateur du cycle de vie des mods communautaires. Charge les manifests, active/désactive les extensions et synchronise le catalogue vérifié avec `osauce.io`.
-* **Modèles d'Action** : Structures `ActionGroup`, `ActionNotification` et `ActionTodo` découplées assurant une synchronisation fluide avec l'interface.
+### 2.3 Persistance Déterministe (`data/`)
+* **Base de données SQLite** :
+  - Table `spheres` : id, nom, icône, couleur hexadécimale, ordre de tri, applications associées (JSON string).
+  - Table `todos` : id, id_sphere, titre, notes, statut complété, priorité, horodatage.
+* **Intégrité hors-ligne** : Aucune dépendance réseau. Sauvegarde synchrone et réactivité via Kotlin StateFlows.
