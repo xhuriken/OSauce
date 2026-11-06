@@ -126,7 +126,7 @@ flowchart LR
     %% Sous-Écran 2-B : Focus Sphère
     S2B --> S2B_1["Bandeau [← Toutes les sphères] + Halo Thématique"]
     S2B --> S2B_2["Dock étanche des applications du domaine"]
-    S2B_3["Liste exclusive des tâches et alertes"] --> S2B
+    S2B --> S2B_3["Liste exclusive des tâches et alertes"]
     S2B --> S2B_4["Capture contextuelle pré-assignée à la sphère"]
 
     %% Écran 3 : App Drawer
@@ -171,11 +171,6 @@ flowchart LR
     style S4A2 fill:#3b0764,stroke:#c084fc,stroke-width:1px,color:#fff
     style S4B fill:#581c87,stroke:#c084fc,stroke-width:1.5px,color:#fff
     style S4C fill:#581c87,stroke:#c084fc,stroke-width:1.5px,color:#fff
-```
-
-    Root --> Col1
-    Root --> Col2
-    Root --> Col3
 ```
 
 ---
