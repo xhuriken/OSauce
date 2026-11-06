@@ -94,84 +94,84 @@ flowchart TD
 
 ## 4. Arbre Fonctionnel Exhaustif (Décomposition Produit)
 
-### 4.1 Vue Graphique en Blocs Compacts (3 Colonnes)
+### 4.1 Vue Graphique Hiérarchique (Orientation Naturelle Gauche $\rightarrow$ Droite)
 
 ```mermaid
-flowchart TB
-    Root["OSauce Launcher (Racine)"]
+flowchart LR
+    Root["<b>OSauce Launcher</b><br/><i>(Niveau 0 Racine)</i>"]
 
-    subgraph Col1["Écrans Principaux (Niveau 0 & 1)"]
-        direction TB
-        
-        subgraph S1["Écran 1 : Silence (Accueil Zen)"]
-            direction TB
-            S1_1["Horloge Monument Space Grotesk<br/>+ Toggle interactif des secondes"]
-            S1_2["Jauge d'autonomie fine Canvas<br/>(Trait discret sous l'horloge)"]
-            S1_3["Devise de calme personnalisable<br/>(Modal IntentionDialog Niveau 4)"]
-            S1_4["Matrice The Sauce réactive<br/>(15x32, 120Hz & Drag Trail)"]
-            S1_5["Dock des 4 Essentiels<br/>(Micro-scale 0.94x sans ripple)"]
-            S1_6["Accès Réglages (Engrenage ou appui long 500ms)"]
-        end
+    %% 4 Pôles Principaux
+    Root --> S1["<b>Écran 1 : Silence</b><br/><i>(Accueil Zen · Niveau 0)</i>"]
+    Root --> S2["<b>Écran 2 : Action Hub</b><br/><i>(Sphères & Tâches · Niveau 0)</i>"]
+    Root --> S3["<b>Écran 3 : App Drawer</b><br/><i>(Tiroir d'apps · Niveau 1)</i>"]
+    Root --> S4["<b>Écran 4 : Réglages</b><br/><i>(Hub 8 Sections · Niveau 2)</i>"]
 
-        subgraph S3["Écran 3 : App Drawer (Swipe Haut)"]
-            direction TB
-            S3_1["Recherche instantanée texte<br/>(Auto-focus clavier dès le swipe)"]
-            S3_2["Rail tactile vertical A-Z<br/>(AlphabetScroller synchronisé)"]
-            S3_3["Rendu monochrome GPU<br/>(ColorMatrix anti-dopamine)"]
-            S3_4["Pastilles de couleur de sphère<br/>sur chaque app assignée"]
-            S3_5["Menu contextuel appui long (N4)<br/>(Assigner sphère, Infos, Désinstaller)"]
-            S3_6["Raccourci direct Réglages (Engrenage)"]
-        end
-    end
+    %% Écran 1 : Silence
+    S1 --> S1_1["Horloge Space Grotesk 96sp + Toggle secondes"]
+    S1 --> S1_2["Jauge d'autonomie Canvas sous l'horloge"]
+    S1 --> S1_3["Devise de calme (Modal IntentionDialog N4)"]
+    S1 --> S1_4["Matrice The Sauce (120Hz & Drag Trail)"]
+    S1 --> S1_5["Dock des 4 Essentiels (Scale tactile 0.94x)"]
+    S1 --> S1_6["Accès Réglages (Engrenage ou appui long 500ms)"]
 
-    subgraph Col2["Action Hub & Focus (Niveau 0 & 3)"]
-        direction TB
-        
-        subgraph S2["Écran 2 : Action Hub (Sphères & Tâches)"]
-            direction TB
-            S2_1["En-tête : Titre + Bouton [+ Sphère] + Engrenage"]
-            S2_2["Grille 2 Colonnes de SphereCards modulaires<br/>(Halo lumineux, compteurs & apps)"]
-            S2_3["4 Sphères Natives : Humains, Travail, Vital, Loisirs"]
-            S2_4["Modal EditSphereDialog (Niveau 4)<br/>(Nom, 8 Couleurs, 8 Icônes vectorielles, Apps)"]
-            S2_5["Barre de capture rapide SQLite 1-tap"]
-            S2_6["Moteur de tâches à gestes tactiles<br/>(Rebond spring, strikethrough vectoriel, swipe)"]
-        end
+    %% Écran 2 : Action Hub
+    S2 --> S2_1["En-tête : Titre + Bouton [+ Sphère] + Engrenage"]
+    S2 --> S2_2["Grille 2 Colonnes de SphereCards modulaires"]
+    S2 --> S2_3["4 Sphères Natives : Humains, Travail, Vital, Loisirs"]
+    S2 --> S2_4["Modal EditSphereDialog (N4 : Nom, 8 Couleurs, 8 Icônes, Apps)"]
+    S2 --> S2_5["Barre de capture rapide SQLite 1-tap"]
+    S2 --> S2_6["Tâches : Rebond spring, Strikethrough progressif, Swipe G/D"]
+    S2 --> S2B["<b>Sous-Écran 2-B : Focus Sphère</b><br/><i>(Drill-Down Niveau 3)</i>"]
 
-        subgraph S2B["Sous-Écran 2-B : Focus Sphère (Drill-Down N3)"]
-            direction TB
-            S2B_1["Bandeau [← Toutes les sphères] + Halo Thématique"]
-            S2B_2["Dock étanche des applications du domaine"]
-            S2B_3["Liste exclusive des tâches et alertes du domaine"]
-            S2B_4["Capture contextuelle pré-assignée à la sphère"]
-        end
-        S2 --> S2B
-    end
+    %% Sous-Écran 2-B : Focus Sphère
+    S2B --> S2B_1["Bandeau [← Toutes les sphères] + Halo Thématique"]
+    S2B --> S2B_2["Dock étanche des applications du domaine"]
+    S2B_3["Liste exclusive des tâches et alertes"] --> S2B
+    S2B --> S2B_4["Capture contextuelle pré-assignée à la sphère"]
 
-    subgraph Col3["Réglages & Sous-Écrans (Niveau 2 & 3)"]
-        direction TB
-        
-        subgraph S4["Écran 4 : Réglages (Hub en 8 Sections)"]
-            direction TB
-            S4_1["1. Système & Lanceur (ACTION_HOME_SETTINGS)"]
-            S4_2["2. Accueil & Silence (Secondes, Devise, Dock)"]
-            S4_3["3. Moteur The Sauce (Vibrance, Morphologie, Trail)"]
-            S4_4["4. Apparence & Thèmes (Noir OLED, Presets JSON)"]
-            S4_5["5. Sphères de Vie (Gestionnaire & Réordonnancement)"]
-            S4_6["6. Tiroir d'apps (Auto-focus, Toggle monochrome)"]
-            S4_7["7. Extensions, Compte & Données (Navigation N3)"]
-            S4_8["8. À propos & Projet Libre (Version, GitHub, FOSS)"]
-        end
+    %% Écran 3 : App Drawer
+    S3 --> S3_1["Recherche instantanée texte (Auto-focus clavier)"]
+    S3 --> S3_2["Rail tactile vertical A-Z (AlphabetScroller)"]
+    S3 --> S3_3["Rendu monochrome GPU (ColorMatrix anti-dopamine)"]
+    S3 --> S3_4["Pastilles de couleur de sphère sur les apps"]
+    S3 --> S3_5["Menu contextuel appui long (N4 : Assigner, Infos, Suppr)"]
+    S3 --> S3_6["Raccourci direct Réglages (Engrenage)"]
 
-        subgraph S4_Subs["Sous-Écrans Dédiés Réglages (Drill-Down N3)"]
-            direction TB
-            S4A["4-A : Hub Mods & Extensions<br/>(Mes Mods ON/OFF + Explorer Catalogue)"]
-            S4A2["4-A2 : Fiche Détail Mod<br/>(Aperçu, Auteur, Version, Permissions)"]
-            S4B["4-B : Compte & Créateur<br/>(Auth JWT optionnelle, Mode invité, Sync)"]
-            S4C["4-C : Données & Sauvegarde<br/>(Export JSON clair, Import SAF, Purge)"]
-            S4A --> S4A2
-        end
-        S4 --> S4_Subs
-    end
+    %% Écran 4 : Réglages
+    S4 --> S4_1["1. Système & Lanceur (ACTION_HOME_SETTINGS, Langue)"]
+    S4 --> S4_2["2. Accueil & Silence (Secondes, Devise, Dock 4 apps)"]
+    S4 --> S4_3["3. Moteur The Sauce (Vibrance, Morphologie, Densité, Trail)"]
+    S4 --> S4_4["4. Apparence & Thèmes (Noir OLED, Presets JSON à chaud)"]
+    S4 --> S4_5["5. Sphères de Vie (Gestionnaire de liste, Réordonnancement)"]
+    S4 --> S4_6["6. Tiroir d'apps (Auto-focus clavier, Toggle monochrome)"]
+    S4 --> S4_7["7. Extensions, Compte & Données (Aiguillage Niveau 3)"]
+    S4 --> S4_8["8. À propos & Projet Libre (Version, GitHub, FOSS)"]
+
+    %% Sous-Écrans Réglages Niveau 3
+    S4_7 --> S4A["<b>Sous-Écran 4-A : Hub Mods</b><br/><i>(Niveau 3 Drill-Down)</i>"]
+    S4_7 --> S4B["<b>Sous-Écran 4-B : Compte & Créateur</b><br/><i>(Niveau 3 Drill-Down)</i>"]
+    S4_7 --> S4C["<b>Sous-Écran 4-C : Données & Sauvegarde</b><br/><i>(Niveau 3 Drill-Down)</i>"]
+
+    S4A --> S4A_1["Onglets Mes Mods ON/OFF & Explorer Catalogue"]
+    S4A --> S4A2["<b>Sous-Écran 4-A2 : Fiche Détail Mod</b>"]
+    S4A2 --> S4A_2["Aperçu, Auteur, Version, Permissions requises"]
+    S4B --> S4B_1["Auth JWT optionnelle (Rappel Mode Invité 100% Hors-ligne)"]
+    S4B --> S4B_2["Profil Créateur & Synchronisation Cloud chiffrée"]
+    S4C --> S4C_1["Export JSON clair de la base SQLite et préférences"]
+    S4C --> S4C_2["Import SAF Android avec validateur de schéma & Purge locale"]
+
+    %% Styling
+    style Root fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#fff
+    style S1 fill:#0f172a,stroke:#38bdf8,stroke-width:1.5px,color:#fff
+    style S2 fill:#0f172a,stroke:#4ade80,stroke-width:1.5px,color:#fff
+    style S2B fill:#14532d,stroke:#4ade80,stroke-width:1.5px,color:#fff
+    style S3 fill:#0f172a,stroke:#facc15,stroke-width:1.5px,color:#fff
+    style S4 fill:#0f172a,stroke:#ec4899,stroke-width:1.5px,color:#fff
+    style S4A fill:#581c87,stroke:#c084fc,stroke-width:1.5px,color:#fff
+    style S4A2 fill:#3b0764,stroke:#c084fc,stroke-width:1px,color:#fff
+    style S4B fill:#581c87,stroke:#c084fc,stroke-width:1.5px,color:#fff
+    style S4C fill:#581c87,stroke:#c084fc,stroke-width:1.5px,color:#fff
+```
 
     Root --> Col1
     Root --> Col2
