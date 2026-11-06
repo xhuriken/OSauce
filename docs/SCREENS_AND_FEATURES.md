@@ -92,7 +92,76 @@ flowchart TD
 
 ---
 
-## 4. Spécification Détaillée des Écrans
+## 4. Arbre Fonctionnel Exhaustif (Décomposition Produit)
+
+Décomposition hiérarchique intégrale de toutes les fonctionnalités, composants tactiles et points d'extension d'OpenSauce :
+
+```mermaid
+graph TD
+    Root["OSauce Launcher (Niveau 0)"]
+
+    %% Branches principales
+    Root --> S1["Écran 1 : Silence (Accueil Zen)"]
+    Root --> S2["Écran 2 : Action Hub (Sphères & Tâches)"]
+    Root --> S3["Écran 3 : App Drawer (Tiroir d'apps)"]
+    Root --> S4["Écran 4 : Réglages (Hub en 8 Sections)"]
+
+    %% Écran 1 : Silence
+    S1 --> S1_Clock["Horloge Monument Space Grotesk + Toggle Secondes"]
+    S1 --> S1_Gauge["Jauge d'autonomie fine Canvas (sous l'horloge)"]
+    S1 --> S1_Motto["Devise de calme personnalisable (Modal Intention)"]
+    S1 --> S1_Sauce["Matrice The Sauce (15x32, 120Hz & Drag Trail)"]
+    S1 --> S1_Dock["Dock 4 Essentiels (Micro-scale 0.94x sans ripple)"]
+    S1 --> S1_Settings["Raccourci Réglages (Engrenage ou appui long 500ms)"]
+
+    %% Écran 2 : Action Hub
+    S2 --> S2_Header["En-tête : Titre + Bouton [+ Sphère] + Engrenage"]
+    S2 --> S2_Grid["Grille 2 Colonnes : SphereCards modulaires"]
+    S2 --> S2_Native["4 Sphères Natives : Humains, Travail, Vital, Loisirs"]
+    S2 --> S2_ModalEdit["Modal Niveau 4 : EditSphereDialog (Nom, 8 Couleurs, 8 Icônes, Apps)"]
+    S2 --> S2_Capture["Barre de Capture Rapide (1-tap, touche Entrée, SQLite)"]
+    S2 --> S2_Tasks["Moteur de Tâches : Case Spring, Strikethrough Vectoriel, Swipe Droit/Gauche"]
+    
+    %% Niveau 3 : Drill-Down depuis Action Hub
+    S2_Grid --> S2B["Sous-Écran 2-B : Focus Sphère (Niveau 3 Drill-Down)"]
+    S2B --> S2B_Nav["Bandeau : Bouton [← Toutes les sphères] + Halo Thématique"]
+    S2B --> S2B_Dock["Dock Étanche : Applications assignées au domaine"]
+    S2B --> S2B_Tasks["Tâches et alertes exclusives du domaine"]
+    S2B --> S2B_Capture["Capture contextuelle pré-assignée à la sphère"]
+
+    %% Écran 3 : App Drawer
+    S3 --> S3_Search["Recherche Instantanée Texte (Auto-focus clavier dès le swipe)"]
+    S3 --> S3_Rail["Rail Tactile Vertical A-Z (AlphabetScroller synchronisé LazyList)"]
+    S3 --> S3_Mono["Rendu Monochrome GPU (ColorMatrix anti-dopamine)"]
+    S3 --> S3_Badges["Pastilles Discrètes de Couleur de Sphère sur chaque App"]
+    S3 --> S3_Menu["Menu Contextuel Appui Long (Niveau 4 : Assigner Sphère, Infos, Désinstaller)"]
+    S3 --> S3_Settings["Raccourci direct Réglages (Icône engrenage)"]
+
+    %% Écran 4 : Réglages
+    S4 --> S4_1["1. Système & Lanceur (ACTION_HOME_SETTINGS, Permissions, Langues)"]
+    S4 --> S4_2["2. Accueil & Silence (Secondes, Devise, Configuration Dock 4 apps)"]
+    S4 --> S4_3["3. Moteur The Sauce (Vibrance, Morphologie Cellules, Densité, Drag Trail)"]
+    S4 --> S4_4["4. Apparence & Thèmes (Noir OLED, Presets, Importation JSON à chaud)"]
+    S4 --> S4_5["5. Sphères de Vie (Gestionnaire de liste, Réordonnancement, Création)"]
+    S4 --> S4_6["6. Tiroir d'apps (Auto-focus clavier, Toggle monochrome, Apps masquées)"]
+    S4 --> S4_7["7. Extensions, Compte & Sauvegarde (Navigation vers sous-écrans Niveau 3)"]
+    S4 --> S4_8["8. À propos & Projet Libre (Version, Dépôt GitHub, Licence FOSS)"]
+
+    %% Sous-écrans Réglages Niveau 3
+    S4_7 --> S4A["Sous-Écran 4-A : Hub Mods & Extensions (Niveau 3)"]
+    S4_7 --> S4B["Sous-Écran 4-B : Compte OpenSauce & Créateur (Niveau 3)"]
+    S4_7 --> S4C["Sous-Écran 4-C : Données, Sauvegarde JSON & Import SAF (Niveau 3)"]
+
+    S4A --> S4A_Tabs["Onglets Mes Mods ON/OFF & Explorer Catalogue"]
+    S4A --> S4A_Detail["Fiche Détail Mod : Captures, Version, Auteur, Permissions"]
+    S4B --> S4B_Auth["Auth JWT Optionnelle (Rappel explicite Mode Invité 100% Hors-ligne)"]
+    S4B --> S4B_Sync["Profil Créateur & Synchronisation Cloud Chiffrée"]
+    S4C --> S4C_IO["Export JSON Clair, Import SAF avec Validateur & Purge Locale"]
+```
+
+---
+
+## 5. Spécification Détaillée des Écrans
 
 ### Écran 1 : SILENCE (Accueil)
 * **Rôle** : Accueil zen, zéro distraction.
