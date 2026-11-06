@@ -94,70 +94,153 @@ flowchart TD
 
 ## 4. Arbre Fonctionnel Exhaustif (Décomposition Produit)
 
-Décomposition hiérarchique intégrale de toutes les fonctionnalités, composants tactiles et points d'extension d'OpenSauce :
+### 4.1 Vue Graphique en Blocs Compacts (3 Colonnes)
 
 ```mermaid
-graph TD
-    Root["OSauce Launcher (Niveau 0)"]
+flowchart TB
+    Root["OSauce Launcher (Racine)"]
 
-    %% Branches principales
-    Root --> S1["Écran 1 : Silence (Accueil Zen)"]
-    Root --> S2["Écran 2 : Action Hub (Sphères & Tâches)"]
-    Root --> S3["Écran 3 : App Drawer (Tiroir d'apps)"]
-    Root --> S4["Écran 4 : Réglages (Hub en 8 Sections)"]
+    subgraph Col1["Écrans Principaux (Niveau 0 & 1)"]
+        direction TB
+        
+        subgraph S1["Écran 1 : Silence (Accueil Zen)"]
+            direction TB
+            S1_1["Horloge Monument Space Grotesk<br/>+ Toggle interactif des secondes"]
+            S1_2["Jauge d'autonomie fine Canvas<br/>(Trait discret sous l'horloge)"]
+            S1_3["Devise de calme personnalisable<br/>(Modal IntentionDialog Niveau 4)"]
+            S1_4["Matrice The Sauce réactive<br/>(15x32, 120Hz & Drag Trail)"]
+            S1_5["Dock des 4 Essentiels<br/>(Micro-scale 0.94x sans ripple)"]
+            S1_6["Accès Réglages (Engrenage ou appui long 500ms)"]
+        end
 
-    %% Écran 1 : Silence
-    S1 --> S1_Clock["Horloge Monument Space Grotesk + Toggle Secondes"]
-    S1 --> S1_Gauge["Jauge d'autonomie fine Canvas (sous l'horloge)"]
-    S1 --> S1_Motto["Devise de calme personnalisable (Modal Intention)"]
-    S1 --> S1_Sauce["Matrice The Sauce (15x32, 120Hz & Drag Trail)"]
-    S1 --> S1_Dock["Dock 4 Essentiels (Micro-scale 0.94x sans ripple)"]
-    S1 --> S1_Settings["Raccourci Réglages (Engrenage ou appui long 500ms)"]
+        subgraph S3["Écran 3 : App Drawer (Swipe Haut)"]
+            direction TB
+            S3_1["Recherche instantanée texte<br/>(Auto-focus clavier dès le swipe)"]
+            S3_2["Rail tactile vertical A-Z<br/>(AlphabetScroller synchronisé)"]
+            S3_3["Rendu monochrome GPU<br/>(ColorMatrix anti-dopamine)"]
+            S3_4["Pastilles de couleur de sphère<br/>sur chaque app assignée"]
+            S3_5["Menu contextuel appui long (N4)<br/>(Assigner sphère, Infos, Désinstaller)"]
+            S3_6["Raccourci direct Réglages (Engrenage)"]
+        end
+    end
 
-    %% Écran 2 : Action Hub
-    S2 --> S2_Header["En-tête : Titre + Bouton [+ Sphère] + Engrenage"]
-    S2 --> S2_Grid["Grille 2 Colonnes : SphereCards modulaires"]
-    S2 --> S2_Native["4 Sphères Natives : Humains, Travail, Vital, Loisirs"]
-    S2 --> S2_ModalEdit["Modal Niveau 4 : EditSphereDialog (Nom, 8 Couleurs, 8 Icônes, Apps)"]
-    S2 --> S2_Capture["Barre de Capture Rapide (1-tap, touche Entrée, SQLite)"]
-    S2 --> S2_Tasks["Moteur de Tâches : Case Spring, Strikethrough Vectoriel, Swipe Droit/Gauche"]
-    
-    %% Niveau 3 : Drill-Down depuis Action Hub
-    S2_Grid --> S2B["Sous-Écran 2-B : Focus Sphère (Niveau 3 Drill-Down)"]
-    S2B --> S2B_Nav["Bandeau : Bouton [← Toutes les sphères] + Halo Thématique"]
-    S2B --> S2B_Dock["Dock Étanche : Applications assignées au domaine"]
-    S2B --> S2B_Tasks["Tâches et alertes exclusives du domaine"]
-    S2B --> S2B_Capture["Capture contextuelle pré-assignée à la sphère"]
+    subgraph Col2["Action Hub & Focus (Niveau 0 & 3)"]
+        direction TB
+        
+        subgraph S2["Écran 2 : Action Hub (Sphères & Tâches)"]
+            direction TB
+            S2_1["En-tête : Titre + Bouton [+ Sphère] + Engrenage"]
+            S2_2["Grille 2 Colonnes de SphereCards modulaires<br/>(Halo lumineux, compteurs & apps)"]
+            S2_3["4 Sphères Natives : Humains, Travail, Vital, Loisirs"]
+            S2_4["Modal EditSphereDialog (Niveau 4)<br/>(Nom, 8 Couleurs, 8 Icônes vectorielles, Apps)"]
+            S2_5["Barre de capture rapide SQLite 1-tap"]
+            S2_6["Moteur de tâches à gestes tactiles<br/>(Rebond spring, strikethrough vectoriel, swipe)"]
+        end
 
-    %% Écran 3 : App Drawer
-    S3 --> S3_Search["Recherche Instantanée Texte (Auto-focus clavier dès le swipe)"]
-    S3 --> S3_Rail["Rail Tactile Vertical A-Z (AlphabetScroller synchronisé LazyList)"]
-    S3 --> S3_Mono["Rendu Monochrome GPU (ColorMatrix anti-dopamine)"]
-    S3 --> S3_Badges["Pastilles Discrètes de Couleur de Sphère sur chaque App"]
-    S3 --> S3_Menu["Menu Contextuel Appui Long (Niveau 4 : Assigner Sphère, Infos, Désinstaller)"]
-    S3 --> S3_Settings["Raccourci direct Réglages (Icône engrenage)"]
+        subgraph S2B["Sous-Écran 2-B : Focus Sphère (Drill-Down N3)"]
+            direction TB
+            S2B_1["Bandeau [← Toutes les sphères] + Halo Thématique"]
+            S2B_2["Dock étanche des applications du domaine"]
+            S2B_3["Liste exclusive des tâches et alertes du domaine"]
+            S2B_4["Capture contextuelle pré-assignée à la sphère"]
+        end
+        S2 --> S2B
+    end
 
-    %% Écran 4 : Réglages
-    S4 --> S4_1["1. Système & Lanceur (ACTION_HOME_SETTINGS, Permissions, Langues)"]
-    S4 --> S4_2["2. Accueil & Silence (Secondes, Devise, Configuration Dock 4 apps)"]
-    S4 --> S4_3["3. Moteur The Sauce (Vibrance, Morphologie Cellules, Densité, Drag Trail)"]
-    S4 --> S4_4["4. Apparence & Thèmes (Noir OLED, Presets, Importation JSON à chaud)"]
-    S4 --> S4_5["5. Sphères de Vie (Gestionnaire de liste, Réordonnancement, Création)"]
-    S4 --> S4_6["6. Tiroir d'apps (Auto-focus clavier, Toggle monochrome, Apps masquées)"]
-    S4 --> S4_7["7. Extensions, Compte & Sauvegarde (Navigation vers sous-écrans Niveau 3)"]
-    S4 --> S4_8["8. À propos & Projet Libre (Version, Dépôt GitHub, Licence FOSS)"]
+    subgraph Col3["Réglages & Sous-Écrans (Niveau 2 & 3)"]
+        direction TB
+        
+        subgraph S4["Écran 4 : Réglages (Hub en 8 Sections)"]
+            direction TB
+            S4_1["1. Système & Lanceur (ACTION_HOME_SETTINGS)"]
+            S4_2["2. Accueil & Silence (Secondes, Devise, Dock)"]
+            S4_3["3. Moteur The Sauce (Vibrance, Morphologie, Trail)"]
+            S4_4["4. Apparence & Thèmes (Noir OLED, Presets JSON)"]
+            S4_5["5. Sphères de Vie (Gestionnaire & Réordonnancement)"]
+            S4_6["6. Tiroir d'apps (Auto-focus, Toggle monochrome)"]
+            S4_7["7. Extensions, Compte & Données (Navigation N3)"]
+            S4_8["8. À propos & Projet Libre (Version, GitHub, FOSS)"]
+        end
 
-    %% Sous-écrans Réglages Niveau 3
-    S4_7 --> S4A["Sous-Écran 4-A : Hub Mods & Extensions (Niveau 3)"]
-    S4_7 --> S4B["Sous-Écran 4-B : Compte OpenSauce & Créateur (Niveau 3)"]
-    S4_7 --> S4C["Sous-Écran 4-C : Données, Sauvegarde JSON & Import SAF (Niveau 3)"]
+        subgraph S4_Subs["Sous-Écrans Dédiés Réglages (Drill-Down N3)"]
+            direction TB
+            S4A["4-A : Hub Mods & Extensions<br/>(Mes Mods ON/OFF + Explorer Catalogue)"]
+            S4A2["4-A2 : Fiche Détail Mod<br/>(Aperçu, Auteur, Version, Permissions)"]
+            S4B["4-B : Compte & Créateur<br/>(Auth JWT optionnelle, Mode invité, Sync)"]
+            S4C["4-C : Données & Sauvegarde<br/>(Export JSON clair, Import SAF, Purge)"]
+            S4A --> S4A2
+        end
+        S4 --> S4_Subs
+    end
 
-    S4A --> S4A_Tabs["Onglets Mes Mods ON/OFF & Explorer Catalogue"]
-    S4A --> S4A_Detail["Fiche Détail Mod : Captures, Version, Auteur, Permissions"]
-    S4B --> S4B_Auth["Auth JWT Optionnelle (Rappel explicite Mode Invité 100% Hors-ligne)"]
-    S4B --> S4B_Sync["Profil Créateur & Synchronisation Cloud Chiffrée"]
-    S4C --> S4C_IO["Export JSON Clair, Import SAF avec Validateur & Purge Locale"]
+    Root --> Col1
+    Root --> Col2
+    Root --> Col3
 ```
+
+---
+
+### 4.2 Arborescence Textuelle Détaillée (Lecture Directe Sans Zoom)
+
+* **1. Écran SILENCE (Accueil Zen · Niveau 0 Pager)**
+  * **1.1. Horloge Monument Space Grotesk** : Chiffres 96sp avec tap interactif pour afficher/masquer les secondes animées.
+  * **1.2. Jauge d'autonomie Canvas** : Trait vectoriel discret sous l'horloge proportionnel à la batterie (sans chiffres anxiogènes).
+  * **1.3. Devise de calme personnalisable** : Phrase inspirante courte (édition par dialogue modal Niveau 4).
+  * **1.4. Matrice interactive « The Sauce »** : Grille 15x32 (480 cellules), delta-time 120Hz, rovers ambiants, gerbes tactiles et traînée fluide au glisser (*Drag Trail*).
+  * **1.5. Dock des 4 essentiels** : Raccourcis directs (Téléphone, Messages, Caméra, Tiroir) avec micro-scale tactile 0.94x sans ripple Material.
+  * **1.6. Accès universel aux Réglages** : Via appui long 500ms sur le fond ou icône engrenage dans l'en-tête.
+
+* **2. Écran ACTION HUB (Dashboard des Sphères · Niveau 0 Pager)**
+  * **2.1. En-tête de contrôle** : Titre `ACTION HUB` + bouton visible **`[ + Sphère ]`** + raccourci vers les Réglages.
+  * **2.2. Grille 2 colonnes de cartes modulaires (`SphereCard`)** :
+    * 4 Sphères natives : **Humains** (`#4ADE80`), **Travail** (`#60A5FA`), **Vital** (`#FBBF24`), **Loisirs** (`#A78BFA`).
+    * Contenu de chaque carte : symbole géométrique vectoriel 1.5dp, nom du domaine, halo de couleur d'accent, badge compteur de tâches, mini-icônes des applications assignées, bouton d'édition rapide.
+    * Carte pointillée **`[ + Créer une sphère ]`** en fin de grille.
+  * **2.3. Modal d'édition/création `EditSphereDialog` (Niveau 4)** : Nom, sélection dans la palette de 8 couleurs OSauce, sélection parmi 8 icônes vectorielles (zéro emoji), liste des applications installées avec cases à cocher et recherche, suppression de sphère.
+  * **2.4. Barre de capture rapide SQLite** : Champ de saisie 1-tap en bas d'écran avec touche Entrée clavier.
+  * **2.5. Moteur de tâches à gestes tactiles** :
+    * Case à cocher circulaire avec rebond ressort (*spring*).
+    * Traçage vectoriel dynamique et progressif du strikethrough (de 0% à 100%).
+    * Gestes de swipe tactile `SwipeToDismissBox` : glisser vers la droite pour terminer (rebond fluide), glisser vers la gauche pour supprimer.
+
+* **2-B. Sous-Écran FOCUS SPHÈRE (Détail Étanche · Niveau 3 Drill-Down)**
+  * **2-B.1. Bandeau de focus** : Bouton retour `← Toutes les sphères`, nom et halo thématique de la sphère active.
+  * **2-B.2. Dock étanche d'applications** : Uniquement les applications assignées à ce domaine (ex: Slack et Gmail pour Travail).
+  * **2-B.3. Liste exclusive du domaine** : Affichage filtré des tâches et alertes rattachées à la sphère.
+  * **2-B.4. Capture contextuelle** : Toute tâche saisie ici est automatiquement pré-assignée à cette sphère.
+
+* **3. Écran APP DRAWER (Tiroir d'Applications · Niveau 1 Swipe Haut)**
+  * **3.1. Recherche instantanée texte** : Clavier ouvert automatiquement dès le swipe pour filtrage temps réel.
+  * **3.2. Rail alphabétique tactile vertical A-Z (`AlphabetScroller`)** : Tranche tactile sur le bord droit avec saut instantané dans le `LazyListState`.
+  * **3.3. Rendu monochrome GPU** : Icônes traitées en noir & blanc via `ColorMatrix` pour neutraliser les stimuli dopaminergiques.
+  * **3.4. Pastille discrète de sphère** : Indicateur de couleur montrant le domaine auquel chaque application appartient.
+  * **3.5. Menu contextuel d'application par appui long (Niveau 4)** : Assigner/réassigner à une sphère, ouvrir les informations système Android, désinstaller l'application.
+  * **3.6. Raccourci Réglages** : Icône engrenage en en-tête pour accès direct sans repasser par l'accueil.
+
+* **4. Écran RÉGLAGES PRINCIPAUX (Hub en 8 Sections · Niveau 2 Modal)**
+  * **4.1. Système & Lanceur** : Définir comme lanceur par défaut Android direct (`ACTION_HOME_SETTINGS`), autorisations système, bilinguisme FR/EN.
+  * **4.2. Accueil & Silence** : Secondes dynamiques de l'horloge, devise de calme personnalisable, configuration des 4 apps du dock.
+  * **4.3. Moteur Sensoriel « The Sauce »** : Vibrance (Subtile / Équilibrée / Éclatante), morphologie des cellules (Carré / Organique / Croix), densité de grille (Large / Normal / Dense / Micro), toggle du dessin de traînée (*Drag Drawing Trail*).
+  * **4.4. Apparence & Thèmes** : Presets Noir OLED pur, prévisualisation et injection dynamique des couleurs, importation de thèmes JSON.
+  * **4.5. Sphères de Vie** : Liste et réordonnancement des sphères, bouton de création directe.
+  * **4.6. Tiroir d'applications** : Auto-focus clavier, toggle du filtre monochrome, gestion des applications masquées.
+  * **4.7. Extensions, Compte & Données** : Aiguillage Niveau 3 vers les 3 sous-écrans spécialisés.
+  * **4.8. À propos & Projet Libre** : Version, auteur, dépôt GitHub public, licence libre FOSS.
+
+* **4-A. Sous-Écran HUB D'EXTENSIONS & MODS (Niveau 3 Drill-Down)**
+  * **4-A.1. Onglet « Mes Mods »** : Listing des extensions installées avec interrupteurs ON/OFF à chaud (sans redémarrage).
+  * **4-A.2. Onglet « Explorer »** : Catalogue communautaire avec filtres par catégorie (Thèmes, Arrière-plans, Comportements, Outils).
+  * **4-A.3. Fiche détaillée de mod (Niveau 3-A2)** : Aperçu, auteur, version, description, permissions requises, bouton Installer/Désinstaller.
+
+* **4-B. Sous-Écran COMPTE OPENSAUCE & CRÉATEUR (Niveau 3 Drill-Down)**
+  * **4-B.1. Authentification JWT optionnelle** : Connexion / Inscription avec rappel explicite du mode invité 100% hors-ligne sans compte.
+  * **4-B.2. Profil créateur** : Gestion et publication de ses propres extensions, suivi des statistiques.
+  * **4-B.3. Synchronisation cloud chiffrée** : Sauvegarde des favoris et thèmes entre plusieurs appareils.
+
+* **4-C. Sous-Écran DONNÉES & SAUVEGARDE (Niveau 3 Drill-Down)**
+  * **4-C.1. Exportation JSON claire** : Sauvegarde complète de la base SQLite (sphères, tâches, réglages) en fichier JSON lisible.
+  * **4-C.2. Importation SAF Android** : Restauration d'une sauvegarde ou d'un thème avec validation stricte du schéma JSON.
+  * **4-C.3. Purge locale sécurisée** : Dialogue modal de réinitialisation complète des données avec confirmation explicite.
 
 ---
 
