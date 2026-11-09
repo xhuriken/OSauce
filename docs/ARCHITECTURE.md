@@ -11,7 +11,7 @@ flowchart TD
     subgraph UI["Interface Utilisateur (Compose 120Hz)"]
         MainActivity["MainActivity (HorizontalPager 1:1)"]
         Silence["feature.silence (HomeScreen)"]
-        Hub["feature.hub (ActionHubScreen & SphereFocus)"]
+        Hub["feature.hub (VosEspacesScreen & EspaceFocus)"]
         Drawer["feature.drawer (AppDrawerScreen)"]
         Settings["feature.settings (SettingsScreen)"]
         ModsUI["feature.settings.mods (ModsScreen)"]
@@ -26,20 +26,20 @@ flowchart TD
     end
 
     subgraph Core["Noyau Sensoriel & Design System"]
-        TheSauce["FluidBackground (Matrice réactive 15x32)"]
+        TheSauce["TheSauceBackground (Matrice réactive 15x32)"]
         ThemeEngine["OSauceThemeEngine (Thèmes OLED & Accents)"]
         Icons["OSauceIcons (Vecteurs géométriques 1.5dp)"]
     end
 
-    subgraph Modding["Moteur de Mods & Hooks"]
+    subgraph Modding["Moteur de Mods & Hooks (@OpenSauce & Tiers)"]
         BgEngine["BackgroundEngine Slot"]
-        SphereHooks["SphereBehaviorModifier (Hooks de sphères)"]
+        SphereHooks["EspaceBehaviorModifier (Hooks d'espaces)"]
         PluginMgr["PluginManager"]
     end
 
     subgraph Data["Persistance Locale (100% Offline SQLite) & Sync"]
-        SphereRepo["SphereRepository"]
-        TodoRepo["TodoRepository"]
+        SphereRepo["EspaceRepository (spheres table)"]
+        TodoRepo["IntentionRepository (todos table)"]
         AppRepo["AppRepository (PackageManager)"]
         Prefs["SettingsPreferences (SharedPreferences sync)"]
         DB[("SQLite OSauceDatabaseHelper")]
@@ -72,24 +72,24 @@ flowchart TD
 
 ### 2.1 Couche Présentation (`feature/`)
 * **`feature.silence`** : Écran d'accueil épuré. Horloge géante Space Grotesk, indicateur batterie discret Canvas, dock 4 essentiels.
-* **`feature.hub`** : Dashboard des Sphères de Vie (Humains, Travail, Vital, Loisirs), vue focus étanche, barre de capture rapide, liste de tâches avec physique de ressort (*spring*) et gestes de swipe.
-* **`feature.drawer`** : Tiroir d'applications alphabétique A-Z. Rendu monochrome GPU (`ColorMatrix`) neutralisant les couleurs dopaminergiques, badges de sphère.
+* **`feature.hub`** : Écran **Vos Espaces** (Humains, Travail, Vital, Loisirs), vue focus étanche (`EspaceFocus`), barre de capture rapide, liste d'intentions avec jauge de progression, physique de ressort (*spring*) et gestes de swipe.
+* **`feature.drawer`** : Tiroir d'applications alphabétique A-Z. Rendu monochrome GPU (`ColorMatrix`) neutralisant les couleurs dopaminergiques, badges de couleur d'espace.
 * **`feature.settings`** : 
-  - `SettingsScreen.kt` : Hub des réglages en 8 sections.
-  - `mods/ModsScreen.kt` : Gestion des mods installés et exploration du catalogue.
+  - `SettingsScreen.kt` : Hub des Paramètres en 8 lignes.
+  - `mods/ModsScreen.kt` : Gestion des mods installés (*The Sauce* par `@OpenSauce`) et catalogue d'extensions.
   - `auth/AuthScreen.kt` & `ProfileScreen.kt` : Connexion, profil et espace créateur.
   - `data/DataScreen.kt` : Exportation/Importation de sauvegardes JSON et purge locale.
 
 ### 2.2 Moteur de Mods & Plugins (`plugin/`)
-* **`BackgroundEngine`** : Slot modulaire pour l'arrière-plan interactif (The Sauce natif ou moteur alternatif).
-* **`SphereBehaviorModifier`** : Points d'ancrage (*Hooks*) permettant à un mod d'altérer la logique des sphères (auto-planning horaire, app locker strict, filtrage des notifications, sync externe Markdown).
+* **`BackgroundEngine`** : Slot modulaire pour l'arrière-plan interactif (*The Sauce* natif par `@OpenSauce` ou moteur alternatif).
+* **`EspaceBehaviorModifier`** : Points d'ancrage (*Hooks*) permettant à un mod d'altérer la logique des espaces (auto-planning horaire, app locker strict, filtrage des notifications, sync externe Markdown).
 
 ### 2.3 Noyau Graphique (`core/designsystem/`)
-* **`FluidBackground.kt`** : Rendu GPU matériel via BitmapShader en 1 seul appel drawPaint. Interpolation continue 120Hz sans allocation mémoire dans le cycle de rendu.
+* **`FluidBackground.kt` / `The Sauce`** : Rendu GPU matériel via BitmapShader en 1 seul appel drawPaint. Interpolation continue 120Hz sans allocation mémoire dans le cycle de rendu, traînée dynamique (*Drag Trail*).
 * **`OSauceIcons.kt`** : Icônes sur-mesure dessinées en courbes de Bézier vectorielles pures. Zéro emoji et zéro artifice textuel.
 
 ### 2.4 Persistance Déterministe (`data/`)
 * **Base de données SQLite** :
-  - Table `spheres` : id, nom, icône, couleur hexadécimale, ordre de tri, applications associées (JSON string).
-  - Table `todos` : id, id_sphere, titre, notes, statut complété, priorité, horodatage.
+  - Table `spheres` (Espaces) : id, nom, icône, couleur hexadécimale, ordre de tri, applications associées (JSON string).
+  - Table `todos` (Intentions) : id, id_sphere, titre, notes, statut complété, progression %, priorité, horodatage.
 * **Intégrité hors-ligne** : Le mode invité ne requiert aucune connexion. Sauvegarde synchrone et réactivité via Kotlin StateFlows.
