@@ -24,27 +24,11 @@ OSauce remet de l'ordre simplement :
 
 ---
 
-+---------------------------------------------------------------------------------------------------+
-| POUR ?                                                | QUI ?                                     |
-| Les personnes (étudiants, créatifs, actifs) qui       | En ont marre de passer 5h par jour sur    |
-| veulent un téléphone qui redevient un outil utile     | leur smartphone sans s'en rendre compte,  |
-| et apaisant, sans couper les ponts avec le monde      | distraits par des flux mélangés et des    |
-| moderne.                                              | interfaces conçues pour capter leur temps.|
-+-------------------------------------------------------+-------------------------------------------+
-| NOTRE PRODUIT                                         | QUI PERMET ?                              |
-| OpenSauce (OSauce) est un launcher Android libre,     | D'avoir un accueil calme avec l'heure en  |
-| éco-conçu et modulaire développé avec amour en        | grand et 4 essentiels, de séparer sa vie  |
-| Kotlin et Jetpack Compose.                            | en Espaces étanches (Humains, Travail,    |
-|                                                       | Vital, Loisirs), et de lancer n'importe   |
-|                                                       | quelle app au clavier en 2 secondes.      |
-+-------------------------------------------------------+-------------------------------------------+
-| CONTRAIREMENT                                         | NOUS                                      |
-| Aux surcouches constructeurs lourdes et opaques,      | Proposons un système 100% transparent,    |
-| ou aux « dumbphones » rétrogrades qui bloquent les    | qui tourne fluide sur n'importe quel tel, |
-| banques et les billets de train.                      | avec le moteur sensoriel The Sauce et une |
-|                                                       | architecture ouverte aux mods de la       |
-|                                                       | communauté.                               |
-+-------------------------------------------------------+-------------------------------------------+
+| Cible / Problème | Proposition OpenSauce |
+| :--- | :--- |
+| **POUR ?**<br>Les personnes (étudiants, créatifs, actifs) qui veulent un téléphone qui redevient un outil utile et apaisant, sans couper les ponts avec le monde moderne. | **QUI ?**<br>En ont marre de passer 5h par jour sur leur smartphone sans s'en rendre compte, distraits par des flux mélangés et des interfaces conçues pour capter leur temps. |
+| **NOTRE PRODUIT**<br>OpenSauce (OSauce) est un launcher Android libre, éco-conçu et modulaire développé en Kotlin et Jetpack Compose. | **QUI PERMET ?**<br>D'avoir un accueil calme avec l'heure en grand et 4 essentiels, de séparer sa vie en Espaces étanches (Humains, Travail, Vital, Loisirs), et de lancer n'importe quelle app au clavier en 2 secondes. |
+| **CONTRAIREMENT**<br>Aux surcouches constructeurs lourdes et opaques, ou aux « dumbphones » rétrogrades qui bloquent les banques et les billets de train. | **NOUS**<br>Proposons un système 100% transparent, fluide sur n'importe quel téléphone, avec le moteur sensoriel The Sauce et une architecture ouverte aux mods de la communauté. |
 
 ---
 
